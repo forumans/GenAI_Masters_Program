@@ -1,0 +1,100 @@
+email_id,subject,body,sender_email,timestamp,priority
+EMAIL001,App Crash Report,"Hi Support Team,
+
+I'm experiencing frequent crashes when using your app. Here are the details:
+
+Device: iPhone 12 Pro
+iOS Version: 16.4
+App Version: 3.2.1
+
+Steps to reproduce:
+1. Open the app
+2. Navigate to Settings
+3. Tap on 'Backup & Sync'
+4. App crashes immediately
+
+This happens every time. Please help as I need this for work.
+
+Thanks,
+Robert Johnson",robert.johnson@company.com,2024-03-15 09:30:00,High
+EMAIL002,Feature Request: Dark Mode,"Dear Development Team,
+
+I would like to request a dark mode feature for the app. As someone who works late hours, the bright white interface causes eye strain.
+
+A toggle in settings would be perfect. Many other productivity apps have this feature.
+
+Best regards,
+Emily Chen",emily.chen@design.com,2024-03-14 14:22:00,Medium
+EMAIL003,Login Issue,"Hello,
+
+I haven't been able to login to my account for 2 days now. I reset my password but still getting 'Invalid credentials' error.
+
+Username: michael.wilson
+Email: mike.w@email.com
+Device: Samsung Galaxy S22
+Android: 13
+App Version: 3.2.1
+
+This is urgent as I have deadlines to meet.
+
+Mike Wilson",mike.w@email.com,2024-03-16 07:45:00,High
+EMAIL004,Suggestion for Improvement,"Hi Team,
+
+Great app overall! Just one suggestion - could you add keyboard shortcuts for common actions? It would speed up workflow significantly.
+
+Keep up the good work!
+
+Alex Thompson",alex.t@startup.io,2024-03-13 16:10:00,Low
+EMAIL005,Data Loss Problem,"URGENT - DATA LOSS
+
+I lost all my project data after the last update. Everything is gone! This is unacceptable for a paid app.
+
+Details:
+- Before update: 3.1.9
+- After update: 3.2.1
+- Device: iPad Pro
+- Data lost: 6 months of work
+
+I need this recovered immediately!
+
+Jennifer Adams",jennifer.adams@creative.co,2024-03-15 11:20:00,Critical
+EMAIL006,App Performance,"Hi,
+
+The app has become very slow after recent updates. Takes 15-20 seconds to load on my iPhone 11.
+
+Is this being looked into?
+
+Thanks,
+David Miller",d.miller123@gmail.com,2024-03-12 13:55:00,Medium
+EMAIL007,Export Feature Request,"Hello,
+
+Would it be possible to add export to Excel functionality? Currently can only export as PDF.
+
+This would help with my reporting workflow.
+
+Best,
+Lisa Anderson",lisa.anderson@finance.com,2024-03-17 10:30:00,Low
+EMAIL008,Sync Issue,"Hello Support,
+
+My data isn't syncing between my phone and tablet. Changes made on phone don't appear on tablet.
+
+Phone: iPhone 14 (3.2.1)
+Tablet: iPad Air (3.2.1)
+Both on same WiFi
+
+Please advise.
+
+Sarah Johnson",sarah.j@consulting.com,2024-03-14 15:40:00,High
+EMAIL009,Positive Feedback,"Just wanted to say thank you for the great app! The new features in 3.2.0 are exactly what I needed.
+
+Keep up the excellent work!
+
+Tom Brown",tom.brown@tech.com,2024-03-16 09:15:00,Low
+EMAIL010,Pricing Concern,"Hi,
+
+I think the subscription price is too high for what's offered. Competing apps offer more features for less money.
+
+Considering canceling my subscription.
+
+Regards,
+Mark Wilson",mark.w@business.com,2024-03-15 08:20:00,Medium

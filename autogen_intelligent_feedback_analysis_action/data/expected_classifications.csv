@@ -1,0 +1,26 @@
+source_id,source_type,category,priority,technical_details,suggested_title
+REV001,review,Bug,Critical,"Device: Samsung Galaxy S21, Android 12, App Version 3.2.1. Crash occurs during data sync operation after last update.",Critical: App crashes during data sync on Android 12
+REV002,review,Praise,Low,"iPhone 14, App Version 3.2.0. User satisfied with dark mode feature and overall performance.",Positive Feedback: Dark mode feature well-received
+REV003,review,Bug,High,"Android device, App Version 3.2.1. Login authentication failure after update despite correct credentials.",High Priority: Login authentication broken after update
+REV004,review,Feature Request,Medium,"iPhone, App Version 3.1.8. User requests calendar integration functionality.",Feature Request: Calendar integration for enhanced productivity
+REV005,review,Bug,Critical,"Multiple devices, App Version 3.2.1. Data synchronization failure causing data loss between devices.",Critical: Data sync failure causing data loss
+REV006,review,Complaint,Medium,"iPhone, App Version 3.2.0. Performance degradation with increased app loading times.",Performance Issue: App loading times increased significantly
+REV007,review,Feature Request,Low,"Android device, App Version 3.1.9. User requests PDF export functionality for work reports.",Feature Request: Add PDF export for work reports
+REV008,review,Praise,Low,"iPhone 14, App Version 3.2.1. User satisfied with UI improvements and overall functionality.",Positive Feedback: New UI improvements appreciated
+REV009,review,Complaint,Medium,"App Version 3.1.8. Customer service response time issue - 5 days without response.",Customer Service: Delayed response to support requests
+REV010,review,Complaint,Low,"App Version 3.2.0. User concerns about subscription pricing and value proposition.",Pricing Concern: User finds subscription too expensive
+REV011,review,Feature Request,Medium,"App Version 3.1.7. User requests custom template creation functionality.",Feature Request: Custom template creation needed
+REV012,review,Bug,High,"iPhone 13, iOS 16.5, App Version 3.2.1. App freezes when attaching large files.",High Priority: App freezes during file attachment
+REV013,review,Praise,Low,"Pixel 7, App Version 3.2.1. User satisfied with recent feature updates.",Positive Feedback: Recent features working well
+REV014,review,Feature Request,Medium,"App Version 3.1.9. User requests team collaboration features.",Feature Request: Add team collaboration functionality
+REV015,review,Spam,Low,"App Version 3.0.5. Random characters and unrelated content.",Spam: Random text content
+EMAIL001,email,Bug,Critical,"iPhone 12 Pro, iOS 16.4, App Version 3.2.1. Crash occurs when navigating to Settings > Backup & Sync. Reproducible 100% of time.",Critical: App crashes in Settings > Backup & Sync menu
+EMAIL002,email,Feature Request,Medium,"No technical issues. User requests dark mode feature for reduced eye strain during late hours.",Feature Request: Implement dark mode for accessibility
+EMAIL003,email,Bug,High,"Samsung Galaxy S22, Android 13, App Version 3.2.1. Login authentication failure persisting after password reset.",High Priority: Login system failure after password reset
+EMAIL004,email,Feature Request,Low,"No technical issues. User requests keyboard shortcuts for improved workflow efficiency.",Feature Request: Add keyboard shortcuts for power users
+EMAIL005,email,Bug,Critical,"iPad Pro, App Version updated from 3.1.9 to 3.2.1. Complete data loss affecting 6 months of work after update.",Critical: Data loss after app update - 6 months affected
+EMAIL006,email,Complaint,Medium,"iPhone 11, App Version 3.2.1. Performance issue with 15-20 second app loading times.",Performance Issue: Slow app loading on iPhone 11
+EMAIL007,email,Feature Request,Low,"No technical issues. User requests Excel export functionality in addition to existing PDF export.",Feature Request: Add Excel export capability
+EMAIL008,email,Bug,High,"iPhone 14 and iPad Air, both App Version 3.2.1, same WiFi network. Cross-device synchronization not working properly.",High Priority: Cross-device sync failure between iOS devices
+EMAIL009,email,Praise,Low,"No technical issues. User expressing satisfaction with features in version 3.2.0.",Positive Feedback: User satisfaction with recent updates
+EMAIL010,email,Complaint,Medium,"No technical issues. User concerns about subscription pricing compared to competitor offerings.",Pricing Concern: Subscription value proposition questioned

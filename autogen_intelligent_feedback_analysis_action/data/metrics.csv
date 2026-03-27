@@ -1,0 +1,5 @@
+metric,value
+total_processed,0.0
+successful_tickets,0.0
+failed_tickets,0.0
+processing_time_seconds,0.0

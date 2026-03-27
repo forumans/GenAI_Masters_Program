@@ -1,0 +1,54 @@
+# Virtual environments
+.venv/
+.venv310/
+venv/
+env/
+ENV/
+
+# Environment variables (secrets)
+.env
+.env.*
+!.env.example
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+*.pyo
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+*.egg
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Zip/archive files
+*.zip
+*.tar.gz
+*.rar
+
+# Claude Code
+.claude/
+
+# Database files
+*.sqlite
+*.db

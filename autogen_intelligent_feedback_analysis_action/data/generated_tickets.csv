@@ -1,0 +1,659 @@
+ticket_id,title,description,category,priority,status,source_id,source_type,created_at,updated_at,assigned_to,tags,classification_confidence,analysis_summary
+TK-20260323-C4E491C5,Bug: Crash on Android,"BUG REPORT
+
+User Impact: Unknown
+Platform: Android
+App Version: 3.2.1
+
+Description:
+App crashes when I try to sync my data. This has been happening since the last update. Using Android 12 on Samsung Galaxy S21.
+
+Technical Details:
+Platform: Android; Devices: android 12, samsung galaxy s21; OS Versions: 12; Error Types: crash; Reproduction Steps: try
+
+Steps to Reproduce:
+1. try
+
+Severity Assessment: High
+
+---
+Source Information:
+Source ID: REV001
+Source Type: review
+Timestamp: 2024-03-15
+User: john_doe89
+Email: nan",Bug,High,Open,REV001,review,2026-03-23T18:16:40.512745,2026-03-23T18:16:40.512745,,"bug,technical,reproducible",0.8333333333333333,"{""category"": ""Bug"", ""classification_confidence"": 0.8333333333333333, ""platform_info"": {""platform"": ""Android"", ""devices"": [""android 12"", ""samsung galaxy s21""], ""os_versions"": [""12""], ""app_versions"": [], ""confidence"": 0.6}, ""error_info"": {""error_types"": [""crash""], ""error_messages"": [], ""error_context"": [""when i try to sync my data""], ""confidence"": 0.2}, ""reproduction_steps"": {""steps"": [""try""], ""has_numbered_steps"": false, ""has_sequential_language"": false, ""confidence"": 0.2}, ""severity_assessment"": {""severity"": ""High"", ""confidence"": 0.8, ""factors"": [""High severity indicator: crash"", ""Critical error type: crash""], ""score"": 0.6}, ""technical_details"": ""Platform: Android; Devices: android 12, samsung galaxy s21; OS Versions: 12; Error Types: crash; Reproduction Steps: try"", ""reproducibility_score"": 0.2, ""overall_confidence"": 0.45, ""source_info"": {""source_id"": ""REV001"", ""source_type"": ""review"", ""timestamp"": ""2024-03-15""}}"
+TK-20260323-1E186AE3,Positive Feedback: Feature,"POSITIVE FEEDBACK
+
+User Sentiment: Unknown
+Platform: nan
+App Version: 3.2.0
+
+Feedback:
+Amazing app! Love the new dark mode feature. Works perfectly on my iPhone 14.
+
+Key Positive Points:
+Amazing app! Love the new dark mode feature
+Works perfectly on my iPhone 14
+
+---
+Source Information:
+Source ID: REV002
+Source Type: review
+Timestamp: 2024-03-14
+User: sarah_j
+Email: nan",Praise,Low,Open,REV002,review,2026-03-23T18:16:40.512745,2026-03-23T18:16:40.512745,,"praise,positive-feedback,satisfaction",1.0,"{""category"": ""Praise"", ""classification_confidence"": 1.0}"
+TK-20260323-86CC2AF1,Bug: Login on Unknown,"BUG REPORT
+
+User Impact: Unknown
+Platform: Unknown
+App Version: 3.2.1
+
+Description:
+Can't login since update. Keeps saying invalid credentials even though password is correct. Please fix!
+
+Technical Details:
+No technical details extracted
+
+Steps to Reproduce:
+No specific steps provided
+
+Severity Assessment: Medium
+
+---
+Source Information:
+Source ID: REV003
+Source Type: review
+Timestamp: 2024-03-16
+User: mike_wilson
+Email: nan",Bug,Medium,Open,REV003,review,2026-03-23T18:16:40.512745,2026-03-23T18:16:40.512745,,"bug,technical,reproducible",0.0,"{""category"": ""Bug"", ""classification_confidence"": 0.0, ""platform_info"": {""platform"": ""Unknown"", ""devices"": [], ""os_versions"": [], ""app_versions"": [], ""confidence"": 0.0}, ""error_info"": {""error_types"": [], ""error_messages"": [], ""error_context"": [], ""confidence"": 0.0}, ""reproduction_steps"": {""steps"": [], ""has_numbered_steps"": false, ""has_sequential_language"": false, ""confidence"": 0.0}, ""severity_assessment"": {""severity"": ""Medium"", ""confidence"": 0.5, ""factors"": [""High severity indicator: can\\'t\\s*login""], ""score"": 0.3}, ""technical_details"": ""No technical details extracted"", ""reproducibility_score"": 0.0, ""overall_confidence"": 0.125, ""source_info"": {""source_id"": ""REV003"", ""source_type"": ""review"", ""timestamp"": ""2024-03-16""}}"
+TK-20260323-2EBF5DB3,Positive Feedback: Feature,"POSITIVE FEEDBACK
+
+User Sentiment: Unknown
+Platform: nan
+App Version: 3.1.8
+
+Feedback:
+Great app but would love to see a calendar integration feature. That would make it 5 stars!
+
+Key Positive Points:
+Great app but would love to see a calendar integration feature
+
+---
+Source Information:
+Source ID: REV004
+Source Type: review
+Timestamp: 2024-03-13
+User: emma_davis
+Email: nan",Praise,Low,Open,REV004,review,2026-03-23T18:16:40.512745,2026-03-23T18:16:40.512745,,"praise,positive-feedback,satisfaction",1.0,"{""category"": ""Praise"", ""classification_confidence"": 1.0}"
+TK-20260323-3855FB04,Bug: Sync on Unknown,"BUG REPORT
+
+User Impact: Unknown
+Platform: Unknown
+App Version: 3.2.1
+
+Description:
+Data sync not working between devices. Lost important work notes. Very frustrating!
+
+Technical Details:
+Error Types: not working
+
+Steps to Reproduce:
+No specific steps provided
+
+Severity Assessment: Low
+
+---
+Source Information:
+Source ID: REV005
+Source Type: review
+Timestamp: 2024-03-15
+User: alex_chen
+Email: nan",Bug,Low,Open,REV005,review,2026-03-23T18:16:40.512745,2026-03-23T18:16:40.512745,,"bug,technical,reproducible",0.8333333333333333,"{""category"": ""Bug"", ""classification_confidence"": 0.8333333333333333, ""platform_info"": {""platform"": ""Unknown"", ""devices"": [], ""os_versions"": [], ""app_versions"": [], ""confidence"": 0.0}, ""error_info"": {""error_types"": [""not working""], ""error_messages"": [], ""error_context"": [], ""confidence"": 0.2}, ""reproduction_steps"": {""steps"": [], ""has_numbered_steps"": false, ""has_sequential_language"": false, ""confidence"": 0.0}, ""severity_assessment"": {""severity"": ""Low"", ""confidence"": 0.4, ""factors"": [""Medium severity indicator: frustrating""], ""score"": 0.2}, ""technical_details"": ""Error Types: not working"", ""reproducibility_score"": 0.0, ""overall_confidence"": 0.15000000000000002, ""source_info"": {""source_id"": ""REV005"", ""source_type"": ""review"", ""timestamp"": ""2024-03-15""}}"
+TK-20260323-8B2FA153,Complaint: Slow,"USER COMPLAINT
+
+Issue Type: Performance Issue
+User Impact: Unknown
+Platform: nan
+
+Description:
+App is getting slower with each update. Takes too long to load now.
+
+Complaint Details:
+General complaint
+
+Suggested Actions:
+1. Investigate user concern
+2. Provide response to user
+3. Consider process improvements
+
+---
+Source Information:
+Source ID: REV006
+Source Type: review
+Timestamp: 2024-03-12
+User: david_m
+Email: nan",Complaint,Medium,Open,REV006,review,2026-03-23T18:16:40.512745,2026-03-23T18:16:40.512745,,"complaint,user-concern,attention-needed",0.7692307692307693,"{""category"": ""Complaint"", ""classification_confidence"": 0.7692307692307693}"
+TK-20260323-0D47979A,Feature Request: export to pdf functionality,"FEATURE REQUEST
+
+Category: Integration
+User Impact: Low
+Business Value: Low
+
+Description:
+Please add export to PDF functionality. Would be super useful for my work reports.
+
+Feature Details:
+Feature request for integration: export to pdf functionality
+
+Implementation Complexity: Low
+Priority Score: 0.36
+
+---
+Source Information:
+Source ID: REV007
+Source Type: review
+Timestamp: 2024-03-17
+User: lisa_anderson
+Email: nan",Feature Request,Low,Open,REV007,review,2026-03-23T18:16:40.513822,2026-03-23T18:16:40.513822,,"feature-request,enhancement,user-feedback",0.7142857142857142,"{""category"": ""Feature Request"", ""classification_confidence"": 0.7142857142857142, ""feature_extraction"": {""is_feature_request"": true, ""confidence"": 0.30000000000000004, ""feature_phrases"": [""export to pdf functionality""], ""patterns_matched"": [""please\\s+add""]}, ""category_info"": {""category"": ""Integration"", ""confidence"": 0.5, ""category_scores"": {""Functionality"": 0, ""UI/UX"": 0, ""Integration"": 1, ""Performance"": 0, ""Security"": 0, ""Accessibility"": 0, ""Automation"": 0, ""Analytics"": 1}, ""keywords_found"": [""export"", ""report""]}, ""impact_assessment"": {""impact_level"": ""Low"", ""confidence"": 0.4, ""factors"": [""Medium impact indicator: useful""], ""score"": 0.2}, ""complexity_estimation"": {""complexity"": ""Low"", ""confidence"": 0.3, ""indicators"": [], ""score"": 0.0}, ""business_value"": {""value"": ""Low"", ""confidence"": 0.3, ""indicators"": [], ""score"": 0.0}, ""feature_summary"": ""Feature request for integration: export to pdf functionality"", ""priority_score"": 0.36, ""overall_confidence"": 0.36000000000000004, ""source_info"": {""source_id"": ""REV007"", ""source_type"": ""review"", ""timestamp"": ""2024-03-17""}}"
+TK-20260323-ED01D7E3,Positive Feedback: Ui,"POSITIVE FEEDBACK
+
+User Sentiment: Unknown
+Platform: nan
+App Version: 3.2.1
+
+Feedback:
+Works perfectly! Best productivity app I've used. The new UI is beautiful.
+
+Key Positive Points:
+Works perfectly! Best productivity app I've used
+
+---
+Source Information:
+Source ID: REV008
+Source Type: review
+Timestamp: 2024-03-16
+User: rachel_green
+Email: nan",Praise,Low,Open,REV008,review,2026-03-23T18:16:40.513822,2026-03-23T18:16:40.513822,,"praise,positive-feedback,satisfaction",1.0,"{""category"": ""Praise"", ""classification_confidence"": 1.0}"
+TK-20260323-FDAEB94A,Complaint: Service,"USER COMPLAINT
+
+Issue Type: Customer Service
+User Impact: Unknown
+Platform: nan
+
+Description:
+Poor customer service. Sent email 5 days ago, no response. Issue still not resolved.
+
+Complaint Details:
+General complaint
+
+Suggested Actions:
+1. Investigate user concern
+2. Provide response to user
+3. Consider process improvements
+
+---
+Source Information:
+Source ID: REV009
+Source Type: review
+Timestamp: 2024-03-14
+User: tom_brown
+Email: nan",Complaint,Medium,Open,REV009,review,2026-03-23T18:16:40.513822,2026-03-23T18:16:40.513822,,"complaint,user-concern,attention-needed",1.0,"{""category"": ""Complaint"", ""classification_confidence"": 1.0}"
+TK-20260323-3E180CD3,Complaint: User Concern,"USER COMPLAINT
+
+Issue Type: Pricing Concern
+User Impact: Unknown
+Platform: nan
+
+Description:
+Too expensive for what it offers. Canceling my subscription.
+
+Complaint Details:
+too expensive
+
+Suggested Actions:
+1. Investigate user concern
+2. Provide response to user
+3. Consider process improvements
+
+---
+Source Information:
+Source ID: REV010
+Source Type: review
+Timestamp: 2024-03-15
+User: jennifer_white
+Email: nan",Complaint,Medium,Open,REV010,review,2026-03-23T18:16:40.513822,2026-03-23T18:16:40.513822,,"complaint,user-concern,attention-needed",1.0,"{""category"": ""Complaint"", ""classification_confidence"": 1.0}"
+TK-20260323-F1973485,Feature Request: create custom templates,"FEATURE REQUEST
+
+Category: Functionality
+User Impact: Low
+Business Value: Low
+
+Description:
+Missing functionality: need ability to create custom templates. Otherwise great app!
+
+Feature Details:
+Feature request for functionality: create custom templates
+
+Implementation Complexity: Low
+Priority Score: 0.36
+
+---
+Source Information:
+Source ID: REV011
+Source Type: review
+Timestamp: 2024-03-13
+User: kevin_lee
+Email: nan",Feature Request,Low,Open,REV011,review,2026-03-23T18:16:40.513822,2026-03-23T18:16:40.513822,,"feature-request,enhancement,user-feedback",0.9090909090909092,"{""category"": ""Feature Request"", ""classification_confidence"": 0.9090909090909092, ""feature_extraction"": {""is_feature_request"": true, ""confidence"": 0.30000000000000004, ""feature_phrases"": [""create custom templates""], ""patterns_matched"": [""missing""]}, ""category_info"": {""category"": ""Functionality"", ""confidence"": 0.6666666666666666, ""category_scores"": {""Functionality"": 2, ""UI/UX"": 0, ""Integration"": 0, ""Performance"": 0, ""Security"": 0, ""Accessibility"": 0, ""Automation"": 1, ""Analytics"": 0}, ""keywords_found"": [""template"", ""create custom"", ""ability to create""]}, ""impact_assessment"": {""impact_level"": ""Low"", ""confidence"": 0.2, ""factors"": [], ""score"": 0.0}, ""complexity_estimation"": {""complexity"": ""Low"", ""confidence"": 0.3, ""indicators"": [], ""score"": 0.0}, ""business_value"": {""value"": ""Low"", ""confidence"": 0.3, ""indicators"": [], ""score"": 0.0}, ""feature_summary"": ""Feature request for functionality: create custom templates"", ""priority_score"": 0.36, ""overall_confidence"": 0.3533333333333334, ""source_info"": {""source_id"": ""REV011"", ""source_type"": ""review"", ""timestamp"": ""2024-03-13""}}"
+TK-20260323-DEC92351,Bug: Freeze on iOS,"BUG REPORT
+
+User Impact: Unknown
+Platform: iOS
+App Version: 3.2.1
+
+Description:
+App freezes when I try to attach large files. iPhone 13, iOS 16.5.
+
+Technical Details:
+Platform: iOS; Devices: iphone 13, ios 16.5, iphone; OS Versions: 16.5; Error Types: freeze; Reproduction Steps: try; 5
+
+Steps to Reproduce:
+1. try
+2. 5
+
+Severity Assessment: Critical
+
+---
+Source Information:
+Source ID: REV012
+Source Type: review
+Timestamp: 2024-03-16
+User: maria_garcia
+Email: nan",Bug,Critical,Open,REV012,review,2026-03-23T18:16:40.513822,2026-03-23T18:16:40.513822,,"bug,technical,reproducible",0.7692307692307693,"{""category"": ""Bug"", ""classification_confidence"": 0.7692307692307693, ""platform_info"": {""platform"": ""iOS"", ""devices"": [""iphone 13"", ""ios 16.5"", ""iphone""], ""os_versions"": [""16.5""], ""app_versions"": [], ""confidence"": 0.8999999999999999}, ""error_info"": {""error_types"": [""freeze""], ""error_messages"": [], ""error_context"": [""when i try to attach large files""], ""confidence"": 0.2}, ""reproduction_steps"": {""steps"": [""try"", ""5""], ""has_numbered_steps"": true, ""has_sequential_language"": false, ""confidence"": 0.7}, ""severity_assessment"": {""severity"": ""Critical"", ""confidence"": 1.0, ""factors"": [""High severity indicator: freeze"", ""Critical error type: freeze"", ""Clear reproduction steps provided"", ""Detailed platform information""], ""score"": 0.9}, ""technical_details"": ""Platform: iOS; Devices: iphone 13, ios 16.5, iphone; OS Versions: 16.5; Error Types: freeze; Reproduction Steps: try; 5"", ""reproducibility_score"": 0.7, ""overall_confidence"": 0.7, ""source_info"": {""source_id"": ""REV012"", ""source_type"": ""review"", ""timestamp"": ""2024-03-16""}}"
+TK-20260323-DAA73D9C,Positive Feedback: Feature,"POSITIVE FEEDBACK
+
+User Sentiment: Unknown
+Platform: nan
+App Version: 3.2.1
+
+Feedback:
+Love the new feature! Works perfectly on my Pixel 7.
+
+Key Positive Points:
+Love the new feature! Works perfectly on my Pixel 7
+
+---
+Source Information:
+Source ID: REV013
+Source Type: review
+Timestamp: 2024-03-17
+User: james_taylor
+Email: nan",Praise,Low,Open,REV013,review,2026-03-23T18:16:40.513822,2026-03-23T18:16:40.513822,,"praise,positive-feedback,satisfaction",1.0,"{""category"": ""Praise"", ""classification_confidence"": 1.0}"
+TK-20260323-24C62829,Feature Request: collaboration features for team projects,"FEATURE REQUEST
+
+Category: Functionality
+User Impact: Low
+Business Value: Medium
+
+Description:
+Would love to see collaboration features for team projects.
+
+Feature Details:
+Feature request for functionality: collaboration features for team projects
+
+Implementation Complexity: Low
+Priority Score: 0.48
+
+---
+Source Information:
+Source ID: REV014
+Source Type: review
+Timestamp: 2024-03-14
+User: sophie_martin
+Email: nan",Feature Request,Low,Open,REV014,review,2026-03-23T18:16:40.513822,2026-03-23T18:16:40.513822,,"feature-request,enhancement,user-feedback",1.0,"{""category"": ""Feature Request"", ""classification_confidence"": 1.0, ""feature_extraction"": {""is_feature_request"": true, ""confidence"": 0.30000000000000004, ""feature_phrases"": [""collaboration features for team projects""], ""patterns_matched"": [""would\\s+love\\s+to\\s+see""]}, ""category_info"": {""category"": ""Functionality"", ""confidence"": 0.0, ""category_scores"": {""Functionality"": 0, ""UI/UX"": 0, ""Integration"": 0, ""Performance"": 0, ""Security"": 0, ""Accessibility"": 0, ""Automation"": 0, ""Analytics"": 0}, ""keywords_found"": []}, ""impact_assessment"": {""impact_level"": ""Low"", ""confidence"": 0.2, ""factors"": [], ""score"": 0.0}, ""complexity_estimation"": {""complexity"": ""Low"", ""confidence"": 0.3, ""indicators"": [], ""score"": 0.0}, ""business_value"": {""value"": ""Medium"", ""confidence"": 0.7, ""indicators"": [""Medium value indicator: team"", ""Medium value indicator: collaboration""], ""score"": 0.4}, ""feature_summary"": ""Feature request for functionality: collaboration features for team projects"", ""priority_score"": 0.48, ""overall_confidence"": 0.3, ""source_info"": {""source_id"": ""REV014"", ""source_type"": ""review"", ""timestamp"": ""2024-03-14""}}"
+TK-20260323-B951849E,Spam/Irrelevant: Automated Classification,"SPAM/IRRELEVANT FEEDBACK
+
+Reason for Classification: Automated spam detection
+Original Content:
+asdfghjkl;asdfghjkl;RANDOM TEXT123!!! SPAM
+
+Action: No action required
+
+---
+Source Information:
+Source ID: REV015
+Source Type: review
+Timestamp: 2024-03-15
+User: spam_user
+Email: nan",Spam,Low,Open,REV015,review,2026-03-23T18:16:40.513822,2026-03-23T18:16:40.513822,,"spam,irrelevant,ignore",1.0,"{""category"": ""Spam"", ""classification_confidence"": 1.0}"
+TK-20260323-21E90A25,Bug: Crash on iOS,"BUG REPORT
+
+User Impact: Unknown
+Platform: iOS
+App Version: nan
+
+Description:
+Hi Support Team,
+
+I'm experiencing frequent crashes when using your app. Here are the details:
+
+Device: iPhone 12 Pro
+iOS Version: 16.4
+App Version: 3.2.1
+
+Steps to reproduce:
+1. Open the app
+2. Navigate to Settings
+3. Tap on 'Backup & Sync'
+4. App crashes immediately
+
+This happens every time. Please help as I need this for work.
+
+Thanks,
+Robert Johnson
+
+Technical Details:
+Platform: iOS; Devices: iphone 12 pro, iphone; Error Types: crash; Reproduction Steps: navigate to settings
+3; open; 4
+app version: 3
+
+Steps to Reproduce:
+1. navigate to settings
+3
+2. open
+3. 4
+app version: 3
+4. app crashes immediately
+
+this happens every time
+5. 1
+
+steps to reproduce:
+1
+
+Severity Assessment: Critical
+
+---
+Source Information:
+Source ID: EMAIL001
+Source Type: email
+Timestamp: 2024-03-15 09:30:00
+User: nan
+Email: robert.johnson@company.com",Bug,Critical,Open,EMAIL001,email,2026-03-23T18:16:40.513822,2026-03-23T18:16:40.513822,,"bug,technical,reproducible",0.6666666666666666,"{""category"": ""Bug"", ""classification_confidence"": 0.6666666666666666, ""platform_info"": {""platform"": ""iOS"", ""devices"": [""iphone 12 pro"", ""iphone""], ""os_versions"": [], ""app_versions"": [], ""confidence"": 0.6}, ""error_info"": {""error_types"": [""crash""], ""error_messages"": [], ""error_context"": [], ""confidence"": 0.2}, ""reproduction_steps"": {""steps"": [""navigate to settings\n3"", ""open"", ""4\napp version: 3"", ""app crashes immediately\n\nthis happens every time"", ""1\n\nsteps to reproduce:\n1""], ""has_numbered_steps"": true, ""has_sequential_language"": false, ""confidence"": 0.7}, ""severity_assessment"": {""severity"": ""Critical"", ""confidence"": 1.0, ""factors"": [""High severity indicator: crash"", ""Critical error type: crash"", ""Clear reproduction steps provided"", ""Detailed bug report""], ""score"": 0.9}, ""technical_details"": ""Platform: iOS; Devices: iphone 12 pro, iphone; Error Types: crash; Reproduction Steps: navigate to settings\n3; open; 4\napp version: 3"", ""reproducibility_score"": 0.7, ""overall_confidence"": 0.625, ""source_info"": {""source_id"": ""EMAIL001"", ""source_type"": ""email"", ""timestamp"": ""2024-03-15 09:30:00""}}"
+TK-20260323-251A57B0,Positive Feedback: Feature,"POSITIVE FEEDBACK
+
+User Sentiment: Unknown
+Platform: nan
+App Version: nan
+
+Feedback:
+Dear Development Team,
+
+I would like to request a dark mode feature for the app. As someone who works late hours, the bright white interface causes eye strain.
+
+A toggle in settings would be perfect. Many other productivity apps have this feature.
+
+Best regards,
+Emily Chen
+
+Key Positive Points:
+A toggle in settings would be perfect
+
+---
+Source Information:
+Source ID: EMAIL002
+Source Type: email
+Timestamp: 2024-03-14 14:22:00
+User: nan
+Email: emily.chen@design.com",Praise,Low,Open,EMAIL002,email,2026-03-23T18:16:40.513822,2026-03-23T18:16:40.513822,,"praise,positive-feedback,satisfaction",0.43478260869565216,"{""category"": ""Praise"", ""classification_confidence"": 0.43478260869565216}"
+TK-20260323-2B45C70E,Bug: Login on Android,"BUG REPORT
+
+User Impact: Unknown
+Platform: Android
+App Version: nan
+
+Description:
+Hello,
+
+I haven't been able to login to my account for 2 days now. I reset my password but still getting 'Invalid credentials' error.
+
+Username: michael.wilson
+Email: mike.w@email.com
+Device: Samsung Galaxy S22
+Android: 13
+App Version: 3.2.1
+
+This is urgent as I have deadlines to meet.
+
+Mike Wilson
+
+Technical Details:
+Platform: Android; Devices: samsung galaxy s22
+; Error Types: error; Reproduction Steps: 2
+
+Steps to Reproduce:
+1. 2
+
+Severity Assessment: Medium
+
+---
+Source Information:
+Source ID: EMAIL003
+Source Type: email
+Timestamp: 2024-03-16 07:45:00
+User: nan
+Email: mike.w@email.com",Bug,Medium,Open,EMAIL003,email,2026-03-23T18:16:40.513822,2026-03-23T18:16:40.513822,,"bug,technical,reproducible",0.20833333333333331,"{""category"": ""Bug"", ""classification_confidence"": 0.20833333333333331, ""platform_info"": {""platform"": ""Android"", ""devices"": [""samsung galaxy s22\n""], ""os_versions"": [], ""app_versions"": [], ""confidence"": 0.3}, ""error_info"": {""error_types"": [""error""], ""error_messages"": [], ""error_context"": [], ""confidence"": 0.2}, ""reproduction_steps"": {""steps"": [""2""], ""has_numbered_steps"": true, ""has_sequential_language"": false, ""confidence"": 0.7}, ""severity_assessment"": {""severity"": ""Medium"", ""confidence"": 0.7, ""factors"": [""High severity indicator: urgent"", ""Clear reproduction steps provided""], ""score"": 0.5}, ""technical_details"": ""Platform: Android; Devices: samsung galaxy s22\n; Error Types: error; Reproduction Steps: 2"", ""reproducibility_score"": 0.7, ""overall_confidence"": 0.475, ""source_info"": {""source_id"": ""EMAIL003"", ""source_type"": ""email"", ""timestamp"": ""2024-03-16 07:45:00""}}"
+TK-20260323-45F34765,Feature Request: No clear feature request identified,"FEATURE REQUEST
+
+Category: Performance
+User Impact: Low
+Business Value: Medium
+
+Description:
+Hi Team,
+
+Great app overall! Just one suggestion - could you add keyboard shortcuts for common actions? It would speed up workflow significantly.
+
+Keep up the good work!
+
+Alex Thompson
+
+Feature Details:
+No clear feature request identified
+
+Implementation Complexity: Low
+Priority Score: 0.48
+
+---
+Source Information:
+Source ID: EMAIL004
+Source Type: email
+Timestamp: 2024-03-13 16:10:00
+User: nan
+Email: alex.t@startup.io",Feature Request,Low,Open,EMAIL004,email,2026-03-23T18:16:40.514821,2026-03-23T18:16:40.514821,,"feature-request,enhancement,user-feedback",0.3448275862068966,"{""category"": ""Feature Request"", ""classification_confidence"": 0.3448275862068966, ""feature_extraction"": {""is_feature_request"": true, ""confidence"": 0.2, ""feature_phrases"": [], ""patterns_matched"": [""suggestion""]}, ""category_info"": {""category"": ""Performance"", ""confidence"": 0.3333333333333333, ""category_scores"": {""Functionality"": 0, ""UI/UX"": 0, ""Integration"": 0, ""Performance"": 1, ""Security"": 0, ""Accessibility"": 1, ""Automation"": 1, ""Analytics"": 0}, ""keywords_found"": [""workflow"", ""speed"", ""keyboard""]}, ""impact_assessment"": {""impact_level"": ""Low"", ""confidence"": 0.2, ""factors"": [], ""score"": 0.0}, ""complexity_estimation"": {""complexity"": ""Low"", ""confidence"": 0.3, ""indicators"": [], ""score"": 0.0}, ""business_value"": {""value"": ""Medium"", ""confidence"": 0.7, ""indicators"": [""Medium value indicator: workflow"", ""Medium value indicator: team""], ""score"": 0.4}, ""feature_summary"": ""No clear feature request identified"", ""priority_score"": 0.48, ""overall_confidence"": 0.3466666666666667, ""source_info"": {""source_id"": ""EMAIL004"", ""source_type"": ""email"", ""timestamp"": ""2024-03-13 16:10:00""}}"
+TK-20260323-0746C9A5,Bug: Technical Issue on iOS,"BUG REPORT
+
+User Impact: Unknown
+Platform: iOS
+App Version: nan
+
+Description:
+URGENT - DATA LOSS
+
+I lost all my project data after the last update. Everything is gone! This is unacceptable for a paid app.
+
+Details:
+- Before update: 3.1.9
+- After update: 3.2.1
+- Device: iPad Pro
+- Data lost: 6 months of work
+
+I need this recovered immediately!
+
+Jennifer Adams
+
+Technical Details:
+Platform: iOS; Devices: ipad pro
+, ipad; Error Types: data loss; Reproduction Steps: 2; 1
+
+Steps to Reproduce:
+1. 2
+2. 1
+
+Severity Assessment: Critical
+
+---
+Source Information:
+Source ID: EMAIL005
+Source Type: email
+Timestamp: 2024-03-15 11:20:00
+User: nan
+Email: jennifer.adams@creative.co",Bug,Critical,Open,EMAIL005,email,2026-03-23T18:16:40.514821,2026-03-23T18:16:40.514821,,"bug,technical,reproducible",0.21739130434782608,"{""category"": ""Bug"", ""classification_confidence"": 0.21739130434782608, ""platform_info"": {""platform"": ""iOS"", ""devices"": [""ipad pro\n"", ""ipad""], ""os_versions"": [], ""app_versions"": [], ""confidence"": 0.6}, ""error_info"": {""error_types"": [""data loss""], ""error_messages"": [], ""error_context"": [], ""confidence"": 0.2}, ""reproduction_steps"": {""steps"": [""2"", ""1""], ""has_numbered_steps"": true, ""has_sequential_language"": false, ""confidence"": 0.7}, ""severity_assessment"": {""severity"": ""Critical"", ""confidence"": 1.0, ""factors"": [""Critical indicator: data\\s*loss"", ""High severity indicator: urgent"", ""Critical error type: data loss"", ""Clear reproduction steps provided"", ""Detailed bug report""], ""score"": 1.3}, ""technical_details"": ""Platform: iOS; Devices: ipad pro\n, ipad; Error Types: data loss; Reproduction Steps: 2; 1"", ""reproducibility_score"": 0.7, ""overall_confidence"": 0.625, ""source_info"": {""source_id"": ""EMAIL005"", ""source_type"": ""email"", ""timestamp"": ""2024-03-15 11:20:00""}}"
+TK-20260323-0494DB77,Complaint: Slow,"USER COMPLAINT
+
+Issue Type: Performance Issue
+User Impact: Unknown
+Platform: nan
+
+Description:
+Hi,
+
+The app has become very slow after recent updates. Takes 15-20 seconds to load on my iPhone 11.
+
+Is this being looked into?
+
+Thanks,
+David Miller
+
+Complaint Details:
+General complaint
+
+Suggested Actions:
+1. Investigate user concern
+2. Provide response to user
+3. Consider process improvements
+
+---
+Source Information:
+Source ID: EMAIL006
+Source Type: email
+Timestamp: 2024-03-12 13:55:00
+User: nan
+Email: d.miller123@gmail.com",Complaint,Medium,Open,EMAIL006,email,2026-03-23T18:16:40.514821,2026-03-23T18:16:40.514821,,"complaint,user-concern,attention-needed",0.37037037037037035,"{""category"": ""Complaint"", ""classification_confidence"": 0.37037037037037035}"
+TK-20260323-09CA871A,Positive Feedback: Functionality,"POSITIVE FEEDBACK
+
+User Sentiment: Unknown
+Platform: nan
+App Version: nan
+
+Feedback:
+Hello,
+
+Would it be possible to add export to Excel functionality? Currently can only export as PDF.
+
+This would help with my reporting workflow.
+
+Best,
+Lisa Anderson
+
+Key Positive Points:
+General positive sentiment
+
+---
+Source Information:
+Source ID: EMAIL007
+Source Type: email
+Timestamp: 2024-03-17 10:30:00
+User: nan
+Email: lisa.anderson@finance.com",Praise,Low,Open,EMAIL007,email,2026-03-23T18:16:40.514821,2026-03-23T18:16:40.514821,,"praise,positive-feedback,satisfaction",0.37037037037037035,"{""category"": ""Praise"", ""classification_confidence"": 0.37037037037037035}"
+TK-20260323-C16F722B,Bug: Sync on iOS,"BUG REPORT
+
+User Impact: Unknown
+Platform: iOS
+App Version: nan
+
+Description:
+Hello Support,
+
+My data isn't syncing between my phone and tablet. Changes made on phone don't appear on tablet.
+
+Phone: iPhone 14 (3.2.1)
+Tablet: iPad Air (3.2.1)
+Both on same WiFi
+
+Please advise.
+
+Sarah Johnson
+
+Technical Details:
+Platform: iOS; Devices: iphone 14, ipad air , ipad, iphone; Error Types: hang; Reproduction Steps: 2
+
+Steps to Reproduce:
+1. 2
+
+Severity Assessment: Medium
+
+---
+Source Information:
+Source ID: EMAIL008
+Source Type: email
+Timestamp: 2024-03-14 15:40:00
+User: nan
+Email: sarah.j@consulting.com",Bug,Medium,Open,EMAIL008,email,2026-03-23T18:16:40.514821,2026-03-23T18:16:40.514821,,"bug,technical,reproducible",0.0,"{""category"": ""Bug"", ""classification_confidence"": 0.0, ""platform_info"": {""platform"": ""iOS"", ""devices"": [""iphone 14"", ""ipad air "", ""ipad"", ""iphone""], ""os_versions"": [], ""app_versions"": [], ""confidence"": 1.0}, ""error_info"": {""error_types"": [""hang""], ""error_messages"": [], ""error_context"": [], ""confidence"": 0.2}, ""reproduction_steps"": {""steps"": [""2""], ""has_numbered_steps"": true, ""has_sequential_language"": false, ""confidence"": 0.7}, ""severity_assessment"": {""severity"": ""Medium"", ""confidence"": 0.5, ""factors"": [""Clear reproduction steps provided"", ""Detailed platform information""], ""score"": 0.30000000000000004}, ""technical_details"": ""Platform: iOS; Devices: iphone 14, ipad air , ipad, iphone; Error Types: hang; Reproduction Steps: 2"", ""reproducibility_score"": 0.7, ""overall_confidence"": 0.6, ""source_info"": {""source_id"": ""EMAIL008"", ""source_type"": ""email"", ""timestamp"": ""2024-03-14 15:40:00""}}"
+TK-20260323-2EBC96C1,Positive Feedback: Feature,"POSITIVE FEEDBACK
+
+User Sentiment: Unknown
+Platform: nan
+App Version: nan
+
+Feedback:
+Just wanted to say thank you for the great app! The new features in 3.2.0 are exactly what I needed.
+
+Keep up the excellent work!
+
+Tom Brown
+
+Key Positive Points:
+Just wanted to say thank you for the great app! The new features in 3
+Keep up the excellent work!
+
+Tom Brown
+
+---
+Source Information:
+Source ID: EMAIL009
+Source Type: email
+Timestamp: 2024-03-16 09:15:00
+User: nan
+Email: tom.brown@tech.com",Praise,Low,Open,EMAIL009,email,2026-03-23T18:16:40.514821,2026-03-23T18:16:40.514821,,"praise,positive-feedback,satisfaction",1.0,"{""category"": ""Praise"", ""classification_confidence"": 1.0}"
+TK-20260323-57AA0985,Complaint: Price,"USER COMPLAINT
+
+Issue Type: Pricing Concern
+User Impact: Unknown
+Platform: nan
+
+Description:
+Hi,
+
+I think the subscription price is too high for what's offered. Competing apps offer more features for less money.
+
+Considering canceling my subscription.
+
+Regards,
+Mark Wilson
+
+Complaint Details:
+General complaint
+
+Suggested Actions:
+1. Investigate user concern
+2. Provide response to user
+3. Consider process improvements
+
+---
+Source Information:
+Source ID: EMAIL010
+Source Type: email
+Timestamp: 2024-03-15 08:20:00
+User: nan
+Email: mark.w@business.com",Complaint,Medium,Open,EMAIL010,email,2026-03-23T18:16:40.514821,2026-03-23T18:16:40.514821,,"complaint,user-concern,attention-needed",1.0,"{""category"": ""Complaint"", ""classification_confidence"": 1.0}"

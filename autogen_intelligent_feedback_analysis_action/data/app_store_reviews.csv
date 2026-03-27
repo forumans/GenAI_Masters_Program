@@ -1,0 +1,16 @@
+review_id,platform,rating,review_text,user_name,date,app_version
+REV001,Google Play,1,"App crashes when I try to sync my data. This has been happening since the last update. Using Android 12 on Samsung Galaxy S21.",john_doe89,2024-03-15,3.2.1
+REV002,App Store,5,"Amazing app! Love the new dark mode feature. Works perfectly on my iPhone 14.",sarah_j,2024-03-14,3.2.0
+REV003,Google Play,2,"Can't login since update. Keeps saying invalid credentials even though password is correct. Please fix!",mike_wilson,2024-03-16,3.2.1
+REV004,App Store,4,"Great app but would love to see a calendar integration feature. That would make it 5 stars!",emma_davis,2024-03-13,3.1.8
+REV005,Google Play,1,"Data sync not working between devices. Lost important work notes. Very frustrating!",alex_chen,2024-03-15,3.2.1
+REV006,App Store,3,"App is getting slower with each update. Takes too long to load now.",david_m,2024-03-12,3.2.0
+REV007,Google Play,4,"Please add export to PDF functionality. Would be super useful for my work reports.",lisa_anderson,2024-03-17,3.1.9
+REV008,App Store,5,"Works perfectly! Best productivity app I've used. The new UI is beautiful.",rachel_green,2024-03-16,3.2.1
+REV009,Google Play,2,"Poor customer service. Sent email 5 days ago, no response. Issue still not resolved.",tom_brown,2024-03-14,3.1.8
+REV010,App Store,1,"Too expensive for what it offers. Canceling my subscription.",jennifer_white,2024-03-15,3.2.0
+REV011,Google Play,4,"Missing functionality: need ability to create custom templates. Otherwise great app!",kevin_lee,2024-03-13,3.1.7
+REV012,App Store,2,"App freezes when I try to attach large files. iPhone 13, iOS 16.5.",maria_garcia,2024-03-16,3.2.1
+REV013,Google Play,5,"Love the new feature! Works perfectly on my Pixel 7.",james_taylor,2024-03-17,3.2.1
+REV014,App Store,3,"Would love to see collaboration features for team projects.",sophie_martin,2024-03-14,3.1.9
+REV015,Google Play,1,"asdfghjkl;asdfghjkl;RANDOM TEXT123!!! SPAM",spam_user,2024-03-15,3.0.5

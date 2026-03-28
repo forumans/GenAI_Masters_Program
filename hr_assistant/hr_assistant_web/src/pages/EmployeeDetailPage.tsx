@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { Pencil, ArrowLeft, CheckCircle2, Clock, XCircle } from "lucide-react";
+import { Pencil, ArrowLeft, CheckCircle2, Clock } from "lucide-react";
 import {
   employeesApi,
   leaveRequestsApi,

@@ -1,10 +1,9 @@
 import React, { useState } from "react";
-import { Link, NavLink, useLocation } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { Users, MessageSquare, Menu, X, Briefcase } from "lucide-react";
 
 const Navbar: React.FC = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const location = useLocation();
 
   const navItems = [
     { to: "/employees", label: "Employees", icon: <Users className="w-4 h-4" /> },

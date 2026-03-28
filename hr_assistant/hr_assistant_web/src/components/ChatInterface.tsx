@@ -55,7 +55,9 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ employeeId }) => {
 
     try {
       let accumulated = "";
-      for await (const token of chatApi.sendStream({ message: text, employee_id: employeeId })) {
+      const streamGenerator = chatApi.sendStream({ message: text, employee_id: employeeId });
+      
+      for await (const token of streamGenerator) {
         accumulated += token;
         setMessages((prev) =>
           prev.map((m) =>

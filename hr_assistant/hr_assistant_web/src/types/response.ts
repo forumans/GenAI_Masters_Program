@@ -13,9 +13,14 @@ export interface TextResponse extends BaseResponse {
   data: string;
 }
 
+export interface TreeNode {
+  name: string;
+  children?: TreeNode[];
+}
+
 export interface TreeResponse extends BaseResponse {
   type: "tree";
-  data: string;
+  data: TreeNode;
 }
 
 export interface TableData {

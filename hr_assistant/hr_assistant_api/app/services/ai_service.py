@@ -63,9 +63,10 @@ STRICT RULES:
 TREE STRUCTURE HANDLING:
 When user asks about organizational structure:
 - Return type: "tree"
-- Data: String with proper tree format using ├──, └──, │
-- Example data: "Board of Directors\\n└── CEO\\n    ├── CFO\\n    └── HR"
-- Each level must be on a new line
+- Data: JSON hierarchy with name and children fields
+- Example data: {{"name": "CEO", "children": [{{"name": "CFO", "children": [{{"name": "Finance"}}]}}]}}
+- Do NOT return plain text with ├── symbols
+- Must be valid JSON structure
 
 --------------------------------
 TABLE STRUCTURE HANDLING:
@@ -233,7 +234,25 @@ class AIService:
                         lines = lines[:-1]
                     final_response = '\n'.join(lines).strip()
                 
-                parsed_response = json.loads(final_response)
+                # Find the start and end of JSON object
+                start_idx = final_response.find('{')
+                if start_idx == -1:
+                    raise ValueError("No JSON object found")
+                
+                # Count braces to find the end
+                brace_count = 0
+                end_idx = start_idx
+                for i, char in enumerate(final_response[start_idx:], start=start_idx):
+                    if char == '{':
+                        brace_count += 1
+                    elif char == '}':
+                        brace_count -= 1
+                        if brace_count == 0:
+                            end_idx = i + 1
+                            break
+                
+                json_str = final_response[start_idx:end_idx]
+                parsed_response = json.loads(json_str)
                 
                 # Validate required fields
                 if not isinstance(parsed_response, dict) or 'type' not in parsed_response or 'data' not in parsed_response:
@@ -259,7 +278,7 @@ class AIService:
                 
             except json.JSONDecodeError as e:
                 logger.error(f"Failed to parse JSON response: {e}")
-                logger.info(f"Raw response: {final_response}")
+                logger.info(f"Raw response: {final_response[:500]}...")
                 # Return as text if JSON parsing fails
                 return json.dumps({
                     "type": "text",

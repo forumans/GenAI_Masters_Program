@@ -27,7 +27,7 @@ const ChatRenderer: React.FC<ChatRendererProps> = ({ response }) => {
       )}
 
       {type === "text" && <TextView text={data} />}
-      {type === "tree" && <TreeView text={data} />}
+      {type === "tree" && <TreeView data={data} />}
       {type === "table" && <TableView data={data} />}
       {type === "metric" && <MetricView data={data} />}
     </div>

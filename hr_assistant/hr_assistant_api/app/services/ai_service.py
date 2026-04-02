@@ -32,6 +32,16 @@ STRICT RULES:
 - If data is missing, use "" (empty string)
 - Keep answers concise and factual
 - If using general knowledge, say "Based on general HR practices..." or similar
+- IMPORTANT: If you provide organizational information, preserve the structure for potential reformatting
+
+--------------------------------
+EMPLOYEE-SPECIFIC QUESTIONS:
+When an employee context is provided below (includes hire date, years of service):
+- USE THE EMPLOYEE'S HIRE DATE AND YEARS OF SERVICE FROM THE CONTEXT
+- For vacation days: Check the policy for accrual based on years of service
+- For other benefits: Consider tenure requirements from policies
+- Always base calculations on the provided employee details
+- EXAMPLE: If employee has 3 years of service, use the 3-year vacation accrual rate
 
 --------------------------------
 TABLE OUTPUT MODE (STRICT):
@@ -65,6 +75,15 @@ JSON RULES:
   }}
 
 --------------------------------
+TREE/DIAGRAM OUTPUT MODE:
+
+When user asks for tree, hierarchy, or org chart format:
+- Return structured text representation using indentation
+- Use → or └── to show hierarchy
+- Do NOT use markdown tables unless specifically requested
+- If no structured data available, say "I don't have sufficient structured data to create a tree diagram"
+
+--------------------------------
 NON-TABLE OUTPUT MODE:
 
 - Return a clear natural language answer
@@ -79,6 +98,9 @@ IMPORTANT:
 - Follow output mode strictly
 
 --------------------------------
+
+Employee Context:
+{employee_context}
 
 Conversation History:
 {history}
@@ -149,7 +171,7 @@ class AIService:
                 history_text = "\n".join(history_parts)
             
             # Check if the user is asking for a table format
-            table_keywords = ["table", "put in a table", "show as a table", "display as table", "format as table"]
+            table_keywords = ["table", "put in a table", "show as a table", "display as table", "format as table", "tree", "hierarchy", "org chart", "tree format", "tree diagram"]
             is_table_request = any(keyword in question.lower() for keyword in table_keywords)
             
             logger.info(f"Is table request: {is_table_request}")
@@ -171,8 +193,15 @@ class AIService:
             chain_input = {
                 "question": question,
                 "history": history_text,
-                "context": context
+                "context": context,
+                "employee_context": employee_context or ""
             }
+            
+            # Log the employee context specifically
+            if employee_context:
+                logger.info(f"Employee context found: {employee_context}")
+            else:
+                logger.warning("No employee context provided - employee may not be found in database")
             
             logger.info("Invoking RAG prompt...")
             

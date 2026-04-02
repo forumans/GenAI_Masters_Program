@@ -2,6 +2,7 @@
 
 import json
 import logging
+import re
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -17,25 +18,132 @@ router = APIRouter(prefix="/api")
 logger = logging.getLogger(__name__)
 
 
-def _build_employee_context(employee_id: Optional[int], db: Session) -> Optional[str]:
-    if not employee_id:
-        return None
-    emp = db.get(Employee, employee_id)
-    if emp is None:
-        return None
-    return (
-        f"Employee: {emp.full_name} | "
-        f"Number: {emp.employee_number} | "
-        f"Position: {emp.position} | "
-        f"Department: {emp.department.name if emp.department else 'Unknown'} | "
-        f"Status: {emp.status.value} | "
-        f"Hire Date: {emp.hire_date}"
-    )
+def _extract_employee_names(question: str) -> list[str]:
+    """Extract potential employee names from the question."""
+    names = []
+    
+    # Pattern 1: Two words starting with capital letters (e.g., "John Doe")
+    pattern = r'\b([A-Z][a-z]+ [A-Z][a-z]+)\b'
+    matches = re.findall(pattern, question)
+    names.extend(matches)
+    
+    # Pattern 2: Single capitalized name (e.g., "Gopi")
+    # Look for capitalized words that might be names
+    # Exclude common words that start with capital but aren't names
+    common_words = {'The', 'What', 'When', 'Where', 'Who', 'How', 'Why', 'Is', 'Are', 'Was', 'Were', 'Will', 'Can', 'Could', 'Should', 'Would', 'Do', 'Does', 'Did', 'Has', 'Have', 'Had'}
+    words = re.findall(r'\b[A-Z][a-z]+\b', question)
+    for word in words:
+        if word not in common_words and len(word) > 2:  # Exclude short words like "It", "He", "She"
+            names.append(word)
+    
+    # Also check for common titles
+    if "Mr." in question or "Ms." in question or "Mrs." in question:
+        title_pattern = r'(?:Mr|Ms|Mrs)\.?\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)'
+        title_matches = re.findall(title_pattern, question)
+        names.extend(title_matches)
+    
+    return list(set(names))  # Remove duplicates
+
+
+def _find_employee_by_name(name: str, db: Session) -> Optional[Employee]:
+    """Find an employee by first and last name or single name."""
+    parts = name.split()
+    
+    if len(parts) >= 2:
+        # Two or more parts - treat as first name + last name(s)
+        first_name = parts[0]
+        last_name = " ".join(parts[1:])  # Handle multi-word last names
+        
+        # Try exact match first
+        employee = db.query(Employee).filter(
+            Employee.first_name.ilike(first_name),
+            Employee.last_name.ilike(last_name)
+        ).first()
+        
+        if employee:
+            return employee
+        
+        # Try fuzzy match
+        employee = db.query(Employee).filter(
+            Employee.first_name.ilike(f"%{first_name}%"),
+            Employee.last_name.ilike(f"%{last_name}%")
+        ).first()
+        
+        return employee
+    else:
+        # Single name - could be first name or last name
+        single_name = parts[0]
+        
+        # Try first name
+        employee = db.query(Employee).filter(
+            Employee.first_name.ilike(single_name)
+        ).first()
+        
+        if employee:
+            return employee
+        
+        # Try last name
+        employee = db.query(Employee).filter(
+            Employee.last_name.ilike(single_name)
+        ).first()
+        
+        if employee:
+            return employee
+        
+        # Try fuzzy match in both fields
+        employee = db.query(Employee).filter(
+            (Employee.first_name.ilike(f"%{single_name}%")) |
+            (Employee.last_name.ilike(f"%{single_name}%"))
+        ).first()
+        
+        return employee
+    
+    return None
+
+
+def _build_employee_context(employee_id: Optional[int], db: Session, question: str = None) -> Optional[str]:
+    """Build employee context from ID or name extraction."""
+    # First try by ID if provided
+    if employee_id:
+        emp = db.get(Employee, employee_id)
+        if emp:
+            return (
+                f"Employee: {emp.full_name} | "
+                f"Number: {emp.employee_number} | "
+                f"Position: {emp.position} | "
+                f"Department: {emp.department.name if emp.department else 'Unknown'} | "
+                f"Status: {emp.status.value} | "
+                f"Hire Date: {emp.hire_date}"
+            )
+    
+    # If no ID but we have a question, try to extract names
+    if question:
+        names = _extract_employee_names(question)
+        for name in names:
+            emp = _find_employee_by_name(name, db)
+            if emp:
+                # Calculate years of service
+                from datetime import date
+                today = date.today()
+                years_of_service = today.year - emp.hire_date.year - ((today.month, today.day) < (emp.hire_date.month, emp.hire_date.day))
+                
+                return (
+                    f"Employee: {emp.full_name} | "
+                    f"Number: {emp.employee_number} | "
+                    f"Position: {emp.position} | "
+                    f"Department: {emp.department.name if emp.department else 'Unknown'} | "
+                    f"Status: {emp.status.value} | "
+                    f"Hire Date: {emp.hire_date} | "
+                    f"Years of Service: {years_of_service}"
+                )
+    
+    return None
 
 
 @router.post("/chat", response_model=ChatResponse)
 def chat(payload: ChatRequest, db: Session = Depends(get_db)):
-    employee_context = _build_employee_context(payload.employee_id, db)
+    employee_context = _build_employee_context(payload.employee_id, db, payload.message)
+    logger.info(f"Employee context: {employee_context}")
     try:
         ai_service = get_ai_service()
         response_text = ai_service.generate_response(
@@ -50,7 +158,8 @@ def chat(payload: ChatRequest, db: Session = Depends(get_db)):
 
 @router.post("/chat/stream")
 def chat_stream(payload: ChatRequest, db: Session = Depends(get_db)):
-    employee_context = _build_employee_context(payload.employee_id, db)
+    employee_context = _build_employee_context(payload.employee_id, db, payload.message)
+    logger.info(f"Employee context: {employee_context}")
     logger.info(f"Received chat request. History present: {bool(payload.conversation_history)}")
     if payload.conversation_history:
         logger.debug(f"History length: {len(payload.conversation_history)}")

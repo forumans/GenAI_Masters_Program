@@ -84,22 +84,20 @@ const HomePage: React.FC = () => {
       {/* Quick links */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {quickLinks.map((link) => (
-          <div
+          <Link
             key={link.to}
-            className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow"
+            to={link.to}
+            className="block bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow hover:border-primary-300 group"
           >
             <div className="mb-4">{link.icon}</div>
             <h2 className="text-lg font-semibold text-gray-900 mb-1">
               {link.title}
             </h2>
             <p className="text-gray-500 text-sm mb-4">{link.description}</p>
-            <Link
-              to={link.to}
-              className="inline-flex items-center text-sm font-medium text-primary-600 hover:text-primary-700"
-            >
+            <div className="inline-flex items-center text-sm font-medium text-primary-600 group-hover:text-primary-700 group-hover:underline">
               {link.cta} &rarr;
-            </Link>
-          </div>
+            </div>
+          </Link>
         ))}
       </div>
     </div>

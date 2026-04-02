@@ -141,6 +141,7 @@ export const onboardingTasksApi = {
 export interface ChatRequest {
   message: string;
   employee_id?: number;
+  conversation_history?: Array<{role: string; content: string}>;
 }
 
 export interface ChatResponse {
@@ -154,11 +155,14 @@ export const chatApi = {
   sendStream: async function* (
     data: ChatRequest
   ): AsyncGenerator<string, void, unknown> {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 60_000);
     const response = await fetch(`${API_BASE}/api/chat/stream`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
-    });
+      signal: controller.signal,
+    }).finally(() => clearTimeout(timeoutId));
 
     if (!response.ok) {
       throw new Error(`Stream request failed: ${response.status}`);
@@ -182,14 +186,15 @@ export const chatApi = {
         if (line.startsWith("data: ")) {
           const raw = line.slice(6).trim();
           if (!raw) continue;
+          let parsed: Record<string, unknown>;
           try {
-            const parsed = JSON.parse(raw);
-            if (parsed.done) return;
-            if (parsed.error) throw new Error(parsed.error);
-            if (parsed.token) yield parsed.token;
+            parsed = JSON.parse(raw);
           } catch {
-            // ignore malformed events
+            continue; // ignore malformed JSON
           }
+          if (parsed.done) return;
+          if (parsed.error) throw new Error(parsed.error as string);
+          if (parsed.token) yield parsed.token as string;
         }
       }
     }

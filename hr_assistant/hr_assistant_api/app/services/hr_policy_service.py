@@ -2,9 +2,9 @@
 
 import logging
 import os
-from functools import lru_cache
 from typing import Optional
 
+from app.config import settings
 from app.services.vector_store import VectorStoreService
 from app.services.ai_service import AIService
 
@@ -23,9 +23,9 @@ def _get_services() -> tuple[VectorStoreService, AIService]:
     global _vector_store, _ai_service
 
     if _vector_store is None or _ai_service is None:
-        openai_api_key = os.environ.get("OPENAI_API_KEY", "")
-        chroma_dir = os.environ.get("CHROMA_PERSIST_DIR", "./chroma_data")
-        hr_pdf_path = os.environ.get("HR_POLICIES_PATH", "../hr_policies/hr_policies.pdf")
+        openai_api_key = settings.OPENAI_API_KEY
+        chroma_dir = settings.CHROMA_PERSIST_DIR
+        hr_pdf_path = settings.HR_POLICIES_PATH
 
         _vector_store = VectorStoreService(
             persist_directory=chroma_dir,
@@ -35,13 +35,19 @@ def _get_services() -> tuple[VectorStoreService, AIService]:
         # Load HR policies PDF into ChromaDB if not already loaded
         if os.path.exists(hr_pdf_path):
             try:
+                logger.info("Loading HR policies PDF from: %s", hr_pdf_path)
                 inserted = _vector_store.load_pdf(hr_pdf_path, source_label="hr_policies")
                 if inserted:
-                    logger.info("Loaded %d chunks from HR policies PDF.", inserted)
+                    logger.info("Successfully loaded %d chunks from HR policies PDF.", inserted)
+                else:
+                    logger.info("HR policies PDF already loaded (no new chunks inserted).")
             except Exception as exc:
                 logger.error("Failed to load HR policies PDF: %s", exc)
+                # Don't re-raise - continue with empty vector store but log the error
+                print(f"WARNING: Failed to load HR policies PDF: {exc}")
         else:
-            logger.warning("HR policies PDF not found at path: %s", hr_pdf_path)
+            logger.error("HR policies PDF not found at path: %s", hr_pdf_path)
+            print(f"ERROR: HR policies PDF not found at: {hr_pdf_path}")
 
         _ai_service = AIService(
             openai_api_key=openai_api_key,

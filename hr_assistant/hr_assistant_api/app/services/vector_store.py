@@ -1,132 +1,49 @@
-"""ChromaDB vector store service for HR policy document retrieval."""
+"""Simplified ChromaDB vector store service using LangChain for HR policy document retrieval."""
 
 import os
 import logging
-from typing import List
+from typing import List, Optional
 
-import chromadb
-from chromadb.utils import embedding_functions
-from openai import OpenAI
+# LangChain imports
+from langchain_community.document_loaders import PyPDFLoader
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_openai import OpenAIEmbeddings
+from langchain_community.vectorstores import Chroma
+
+from app.config import settings
 
 logger = logging.getLogger(__name__)
 
-COLLECTION_NAME = "hr_policies"
-CHUNK_SIZE = 800
-CHUNK_OVERLAP = 100
-
-
-def _chunk_text(text: str, chunk_size: int = CHUNK_SIZE, overlap: int = CHUNK_OVERLAP) -> List[str]:
-    """Split *text* into overlapping chunks of approximately *chunk_size* characters.
-
-    Args:
-        text: Full document text.
-        chunk_size: Target character length per chunk.
-        overlap: Number of characters to overlap between consecutive chunks.
-
-    Returns:
-        List of text chunks.
-    """
-    chunks: List[str] = []
-    start = 0
-    text_length = len(text)
-
-    while start < text_length:
-        end = min(start + chunk_size, text_length)
-        # Try to end at a sentence boundary
-        if end < text_length:
-            boundary = text.rfind(".", start, end)
-            if boundary > start:
-                end = boundary + 1
-
-        chunk = text[start:end].strip()
-        if chunk:
-            chunks.append(chunk)
-        start = end - overlap
-
-    return chunks
-
-
-def _extract_text_from_pdf(pdf_path: str) -> str:
-    """Extract plain text from a PDF file.
-
-    Tries PyPDF2 first, then falls back to pdfplumber if available.
-
-    Args:
-        pdf_path: Absolute or relative path to the PDF.
-
-    Returns:
-        Extracted text as a single string.
-    """
-    try:
-        import PyPDF2
-        text_parts: List[str] = []
-        with open(pdf_path, "rb") as fh:
-            reader = PyPDF2.PdfReader(fh)
-            for page in reader.pages:
-                page_text = page.extract_text()
-                if page_text:
-                    text_parts.append(page_text)
-        return "\n".join(text_parts)
-    except ImportError:
-        pass
-
-    try:
-        import pdfplumber
-        text_parts = []
-        with pdfplumber.open(pdf_path) as pdf:
-            for page in pdf.pages:
-                page_text = page.extract_text()
-                if page_text:
-                    text_parts.append(page_text)
-        return "\n".join(text_parts)
-    except ImportError:
-        pass
-
-    raise RuntimeError(
-        "No PDF extraction library found. "
-        "Install PyPDF2 (`pip install PyPDF2`) or pdfplumber (`pip install pdfplumber`)."
-    )
+# Use settings for all configuration values
 
 
 class VectorStoreService:
-    """Manages a ChromaDB collection of HR policy document embeddings.
+    """Simplified vector store service using LangChain for HR policy document retrieval.
 
     Attributes:
         persist_directory: Path where ChromaDB persists its data.
         openai_api_key: OpenAI API key used for generating embeddings.
-        client: ChromaDB persistent client.
-        collection: ChromaDB collection holding policy chunks.
-        embedding_fn: OpenAI embedding function used by ChromaDB.
+        vector_store: LangChain Chroma vector store instance.
+        embedding_fn: LangChain OpenAI embedding function.
     """
 
     def __init__(self, persist_directory: str, openai_api_key: str) -> None:
         self.persist_directory = persist_directory
-        os.makedirs(persist_directory, exist_ok=True)
-
-        self.client = chromadb.PersistentClient(path=persist_directory)
-
-        self.embedding_fn = embedding_functions.OpenAIEmbeddingFunction(
-            api_key=openai_api_key,
-            model_name="text-embedding-ada-002",
+        self.openai_api_key = openai_api_key
+        
+        # Initialize embedding function with model from settings
+        self.embedding_fn = OpenAIEmbeddings(
+            model=settings.EMBEDDING_MODEL_NAME,
+            openai_api_key=openai_api_key
         )
-
-        self.collection = self.client.get_or_create_collection(
-            name=COLLECTION_NAME,
-            embedding_function=self.embedding_fn,
-            metadata={"hnsw:space": "cosine"},
-        )
-
-        logger.info(
-            "VectorStoreService initialised. Collection '%s' has %d documents.",
-            COLLECTION_NAME,
-            self.collection.count(),
-        )
+        
+        # Initialize vector store (will be loaded with documents)
+        self.vector_store: Optional[Chroma] = None
+        
+        logger.info(f"VectorStoreService initialized with {settings.EMBEDDING_MODEL_NAME} model")
 
     def load_pdf(self, pdf_path: str, source_label: str = "hr_policies") -> int:
-        """Load a PDF, chunk it, and upsert chunks into the collection.
-
-        If the document has already been loaded (same source_label) this method
-        returns 0 without re-inserting duplicates.
+        """Load a PDF using LangChain, chunk it, and store in ChromaDB.
 
         Args:
             pdf_path: Path to the PDF file to ingest.
@@ -135,25 +52,58 @@ class VectorStoreService:
         Returns:
             Number of new chunks inserted.
         """
-        existing = self.collection.get(where={"source": source_label})
-        if existing and existing["ids"]:
-            logger.info("Document '%s' already loaded (%d chunks). Skipping.", source_label, len(existing["ids"]))
-            return 0
-
-        logger.info("Extracting text from '%s' …", pdf_path)
-        text = _extract_text_from_pdf(pdf_path)
-        chunks = _chunk_text(text)
-
-        if not chunks:
-            logger.warning("No text extracted from '%s'.", pdf_path)
-            return 0
-
-        ids = [f"{source_label}_chunk_{i}" for i in range(len(chunks))]
-        metadatas = [{"source": source_label, "chunk_index": i} for i in range(len(chunks))]
-
-        self.collection.upsert(documents=chunks, ids=ids, metadatas=metadatas)
-        logger.info("Inserted %d chunks from '%s'.", len(chunks), source_label)
-        return len(chunks)
+        try:
+            # Check if vector store already exists and has documents
+            if os.path.exists(self.persist_directory):
+                logger.info("Loading existing ChromaDB...")
+                self.vector_store = Chroma(
+                    persist_directory=self.persist_directory,
+                    embedding_function=self.embedding_fn,
+                    collection_name=settings.CHROMA_COLLECTION_NAME
+                )
+                
+                # Check if documents already exist
+                if self.vector_store._collection.count() > 0:
+                    logger.info("Document already loaded (%d chunks). Skipping.", 
+                              self.vector_store._collection.count())
+                    return 0
+            
+            # Load PDF using LangChain
+            logger.info("Extracting text from '%s' using LangChain...", pdf_path)
+            loader = PyPDFLoader(pdf_path)
+            documents = loader.load()
+            
+            if not documents:
+                logger.warning("No documents extracted from '%s'.", pdf_path)
+                return 0
+            
+            # Split into chunks using LangChain
+            logger.info("Splitting documents into chunks...")
+            text_splitter = RecursiveCharacterTextSplitter(
+                chunk_size=settings.CHUNK_SIZE,
+                chunk_overlap=settings.CHUNK_OVERLAP
+            )
+            chunks = text_splitter.split_documents(documents)
+            
+            if not chunks:
+                logger.warning("No chunks created from '%s'.", pdf_path)
+                return 0
+            
+            # Create vector store with documents
+            logger.info("Creating embeddings and storing %d chunks in ChromaDB...", len(chunks))
+            self.vector_store = Chroma.from_documents(
+                documents=chunks,
+                embedding=self.embedding_fn,
+                collection_name=settings.CHROMA_COLLECTION_NAME,
+                persist_directory=self.persist_directory
+            )
+            
+            logger.info("Successfully inserted %d chunks from '%s'.", len(chunks), pdf_path)
+            return len(chunks)
+            
+        except Exception as e:
+            logger.error("Failed to load PDF '%s': %s", pdf_path, str(e))
+            raise RuntimeError(f"PDF loading failed: {str(e)}") from e
 
     def query(self, question: str, n_results: int = 5) -> List[str]:
         """Return the most relevant document chunks for *question*.
@@ -165,12 +115,41 @@ class VectorStoreService:
         Returns:
             List of relevant text chunks ordered by relevance (most relevant first).
         """
-        if self.collection.count() == 0:
+        if not self.vector_store:
+            logger.warning("Vector store not initialized. No documents to query.")
+            return []
+        
+        try:
+            # Use LangChain similarity search
+            docs = self.vector_store.similarity_search(
+                question, 
+                k=min(n_results, self.vector_store._collection.count())
+            )
+            
+            # Extract page content from documents
+            return [doc.page_content for doc in docs]
+            
+        except Exception as e:
+            logger.error("Vector store query failed: %s", e)
             return []
 
-        results = self.collection.query(
-            query_texts=[question],
-            n_results=min(n_results, self.collection.count()),
-        )
-        documents = results.get("documents", [[]])[0]
-        return documents
+    def count(self) -> int:
+        """Return the number of documents in the vector store."""
+        if not self.vector_store:
+            return 0
+        return self.vector_store._collection.count()
+
+
+# Legacy functions for backward compatibility
+def _chunk_text(text: str, chunk_size: int = None, overlap: int = None) -> List[str]:
+    """Legacy chunking function - use VectorStoreService.load_pdf() instead."""
+    # This is kept for backward compatibility but should not be used
+    logger.warning("_chunk_text is deprecated. Use VectorStoreService.load_pdf() instead.")
+    return []
+
+
+def _extract_text_from_pdf(pdf_path: str) -> str:
+    """Legacy PDF extraction function - use VectorStoreService.load_pdf() instead."""
+    # This is kept for backward compatibility but should not be used
+    logger.warning("_extract_text_from_pdf is deprecated. Use VectorStoreService.load_pdf() instead.")
+    return ""

@@ -3,7 +3,7 @@
 import re
 from datetime import datetime, date
 from decimal import Decimal
-from typing import Optional
+from typing import Optional, List, Dict
 
 from pydantic import BaseModel, ConfigDict, field_validator, model_validator
 
@@ -250,6 +250,7 @@ class OnboardingTaskResponse(BaseModel):
 class ChatRequest(BaseModel):
     message: str
     employee_id: Optional[int] = None
+    conversation_history: Optional[List[dict]] = None
 
     @field_validator("message")
     @classmethod

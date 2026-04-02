@@ -18,7 +18,7 @@ const TreeView: React.FC<TreeViewProps> = ({ data }) => {
         className="whitespace-pre-wrap font-mono text-sm bg-gray-50 p-3 rounded-lg"
         style={{ lineHeight: "1.5" }}
       >
-        {data}
+        {String(data)}
       </div>
     );
   }

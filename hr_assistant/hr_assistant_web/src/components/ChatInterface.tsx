@@ -2,8 +2,28 @@ import React, { useState, useRef, useEffect, useCallback } from "react";
 import { Send, Bot, User, Loader2 } from "lucide-react";
 import { chatApi } from "../services/api";
 import type { ChatMessage } from "../types";
+import ChatRenderer from "./renderers/ChatRenderer";
+import type { ChatResponse } from "../types/response";
 
-// Simple markdown parser for tables and basic formatting
+// Function to parse structured JSON response
+const parseStructuredResponse = (content: string): ChatResponse | null => {
+  try {
+    const trimmed = content.trim();
+    if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
+      const parsed = JSON.parse(trimmed);
+      
+      // Validate required fields
+      if (parsed.type && parsed.data !== undefined) {
+        return parsed as ChatResponse;
+      }
+    }
+  } catch (e) {
+    // Not valid JSON, return null
+  }
+  return null;
+};
+
+// Simple markdown parser for tables and basic formatting (fallback for non-JSON responses)
 const parseMarkdown = (text: string): string => {
   // Check if response is JSON format
   if (text.trim().startsWith('{') && text.trim().endsWith('}')) {
@@ -344,6 +364,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ employeeId }) => {
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [streamBuffer, setStreamBuffer] = useState<{ [key: string]: string }>({});
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -370,6 +391,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ employeeId }) => {
 
     // Add a placeholder assistant message for streaming
     const assistantId = window.crypto.randomUUID();
+    setStreamBuffer(prev => ({ ...prev, [assistantId]: "" }));
     setMessages((prev) => [
       ...prev,
       {
@@ -394,11 +416,19 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ employeeId }) => {
       });
       
       for await (const token of streamGenerator) {
-        setMessages((prev) =>
-          prev.map((m) =>
-            m.id === assistantId ? { ...m, content: m.content + token } : m
-          )
-        );
+        setStreamBuffer((prev) => {
+          const newBuffer = { ...prev };
+          newBuffer[assistantId] = (newBuffer[assistantId] || "") + token;
+          
+          // Update the message content
+          setMessages((prevMessages) =>
+            prevMessages.map((m) =>
+              m.id === assistantId ? { ...m, content: newBuffer[assistantId] } : m
+            )
+          );
+          
+          return newBuffer;
+        });
       }
     } catch (err) {
       // Fall back to non-streaming if SSE fails
@@ -434,6 +464,12 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ employeeId }) => {
       }
     } finally {
       setIsLoading(false);
+      // Clean up stream buffer
+      setStreamBuffer(prev => {
+        const newBuffer = { ...prev };
+        delete newBuffer[assistantId];
+        return newBuffer;
+      });
       inputRef.current?.focus();
     }
   }, [input, isLoading, employeeId]);
@@ -493,24 +529,14 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ employeeId }) => {
               {msg.content ? (
                 msg.role === "assistant" ? (
                   (() => {
-                    // Check if this is a tree structure (contains └── or ├──)
-                    const isTreeStructure = msg.content.includes('└──') || msg.content.includes('├──');
+                    // Try to parse as structured JSON response
+                    const structuredResponse = parseStructuredResponse(msg.content);
                     
-                    if (isTreeStructure) {
-                      // For tree structures, use pre-wrap to preserve formatting
-                      return (
-                        <div
-                          style={{
-                            whiteSpace: "pre-wrap",
-                            fontFamily: "monospace",
-                            lineHeight: "1.5",
-                          }}
-                        >
-                          {msg.content}
-                        </div>
-                      );
+                    if (structuredResponse) {
+                      // Use the new structured renderer
+                      return <ChatRenderer response={structuredResponse} />;
                     } else {
-                      // For other content, use the existing markdown parser
+                      // Fallback to old markdown parser for non-JSON responses
                       return (
                         <div 
                           dangerouslySetInnerHTML={{ __html: parseMarkdown(msg.content) }}

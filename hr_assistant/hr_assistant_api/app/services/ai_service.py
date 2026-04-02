@@ -20,10 +20,29 @@ RAG_TEMPLATE = """You are an HR assistant.
 Your job is to answer user questions using the provided context and conversation history.
 
 --------------------------------
-OUTPUT MODE PRIORITY (highest to lowest):
-1. TREE / ORG STRUCTURE MODE
-2. TABLE MODE
-3. TEXT MODE
+RESPONSE FORMAT (REQUIRED):
+ALWAYS return output in this JSON format (no markdown, no code blocks):
+
+{{"type": "text | table | tree | metric", "data": ..., "meta": {{"title": "", "description": ""}}}}
+
+CRITICAL: 
+- Return ONLY the JSON object
+- DO NOT wrap in ```json``` or any markdown
+- DO NOT add any text before or after the JSON
+- The entire response must be valid JSON
+
+RULES:
+- Do NOT return raw text outside JSON
+- Select correct type based on user intent:
+  * For org structure → type = "tree"
+  * For tabular data → type = "table"
+  * For counts/summary → type = "metric"
+  * Otherwise → type = "text"
+- For tree type: data should be a string with line breaks
+- For table type: data should be {{ "columns": [...], "rows": [...] }}
+- For metric type: data should be {{ "label": string, "value": number }}
+- For text type: data should be a string
+
 --------------------------------
 
 DATA SOURCE PRIORITY:
@@ -41,98 +60,26 @@ STRICT RULES:
 - IMPORTANT: If you provide organizational information, preserve structure
 
 --------------------------------
-TREE / ORG STRUCTURE OUTPUT MODE (STRICT OVERRIDE):
-
-Trigger this mode when the question is about:
-- organizational structure
-- org structure
-- org chart
-- hierarchy
-- reporting structure
-- who reports to whom
-- team structure
-- chain of command
-- management structure
-
-If triggered:
-- This mode OVERRIDES all other modes
-- You MUST return ONLY a tree structure
-- DO NOT return paragraphs, explanations, or JSON
-
-CRITICAL FORMATTING RULES:
-- Each node MUST be on a NEW LINE
-- Output MUST contain real line breaks (not spaces)
-- DO NOT compress output into a single line
-- Use plain text only
-
-FORMAT:
-Parent
-├── Child
-│   ├── Sub-child
-│   └── Sub-child
-└── Child
-
-- Maintain proper indentation using spaces
-- Use characters: ├── , └── , │
-
-DATA HANDLING:
-- The context may be unordered or not perfectly structured
-- You MUST reconstruct the hierarchy logically from the available data
-- Do NOT fall back to paragraph format
-- If only partial hierarchy is available, construct the best possible structure
-
-VALIDATION BEFORE RETURN:
-- Ensure output has multiple lines
-- If output is a single line, rewrite into proper multi-line tree format
-
-FAILURE CONDITION:
-If no hierarchy information is available, return:
-"I don't have enough information to determine the organizational structure."
+TREE STRUCTURE HANDLING:
+When user asks about organizational structure:
+- Return type: "tree"
+- Data: String with proper tree format using ├──, └──, │
+- Example data: "Board of Directors\\n└── CEO\\n    ├── CFO\\n    └── HR"
+- Each level must be on a new line
 
 --------------------------------
-TABLE OUTPUT MODE:
-
-Trigger this mode when:
-- User explicitly asks for table, list, or structured format
-- OR user asks to reformat previous answer into table/list
-
-If triggered:
-- Return ONLY valid JSON
-- Do NOT include ANY text before or after JSON
-
-FORMAT:
-{{
-  "columns": ["column1", "column2"],
-  "rows": [
-    ["value1", "value2"]
-  ]
-}}
-
-JSON RULES:
-- Columns must match row values exactly
-- No extra fields
-- No markdown
-- Use "" for missing values
-
-If no data is available, return:
-{{
-  "columns": [],
-  "rows": []
-}}
+TABLE STRUCTURE HANDLING:
+When user asks for tabular data:
+- Return type: "table"
+- Data: Object with columns and rows arrays
+- Example data: {{ "columns": ["Name", "Date"], "rows": [["John", "01/01/2023"]] }}
 
 --------------------------------
-NON-TABLE / TEXT OUTPUT MODE:
-
-- Return a clear natural language answer
-- Do NOT include JSON
-- If no answer found in context, you may provide general guidance but clearly state it
-
---------------------------------
-
-IMPORTANT:
-- NEVER mix JSON and text in the same response
-- NEVER generate partial JSON
-- Follow output mode priority strictly
+METRIC STRUCTURE HANDLING:
+When user asks for counts or summaries:
+- Return type: "metric"
+- Data: Object with label and value
+- Example data: {{ "label": "Total Employees", "value": 124 }}
 
 --------------------------------
 
@@ -209,15 +156,14 @@ class AIService:
                     history_parts.append(f"[{role}]: {msg['content']}")
                 history_text = "\n".join(history_parts)
             
-            # Check if the user is asking for a table format
+            # Check if the user is asking for a table format (kept for logging only)
             table_keywords = ["table", "put in a table", "show as a table", "display as table", "format as table"]
             tree_keywords = ["organizational structure", "org structure", "org chart", "hierarchy", "reporting structure", "who reports to whom", "team structure", "chain of command", "management structure", "tree", "tree format", "tree diagram"]
             
             is_table_request = any(keyword in question.lower() for keyword in table_keywords)
             is_tree_request = any(keyword in question.lower() for keyword in tree_keywords)
             
-            logger.info(f"Is table request: {is_table_request}")
-            logger.info(f"Is tree request: {is_tree_request}")
+            logger.info(f"Request type - Table: {is_table_request}, Tree: {is_tree_request}")
             
             # Retrieve context
             try:
@@ -269,36 +215,57 @@ class AIService:
                 logger.error(f"Error in RAG chain: {e}", exc_info=True)
                 raise
             
-            # If it's a table request (not tree), validate the JSON response
-            if is_table_request and not is_tree_request:
-                logger.info(f"Checking if table response is valid JSON...")
-                logger.info(f"Response starts with: {final_response[:50]}...")
+            # Parse and validate JSON response
+            try:
+                import json
+                import re
                 
-                # Check if response looks like JSON
-                stripped = final_response.strip()
-                if not (stripped.startswith('{') and stripped.endswith('}')):
-                    logger.warning("Response doesn't look like JSON, returning as-is")
-                    # Not JSON, return as regular text
-                    return final_response
+                # Try to extract JSON from markdown code blocks if present
+                json_match = re.search(r'```(?:json)?\s*(\{.*?\})\s*```', final_response, re.DOTALL)
+                if json_match:
+                    final_response = json_match.group(1)
+                elif final_response.strip().startswith('```'):
+                    # Remove any markdown wrapper
+                    lines = final_response.strip().split('\n')
+                    if lines[0].startswith('```'):
+                        lines = lines[1:]
+                    if lines[-1].endswith('```'):
+                        lines = lines[:-1]
+                    final_response = '\n'.join(lines).strip()
                 
-                try:
-                    import json
-                    parsed = json.loads(final_response)
-                    if not isinstance(parsed, dict) or 'columns' not in parsed or 'rows' not in parsed:
-                        logger.error("Response is JSON but not valid table format")
-                        logger.info(f"Parsed keys: {list(parsed.keys()) if isinstance(parsed, dict) else 'Not a dict'}")
-                        return json.dumps({
-                            "columns": ["Error"],
-                            "rows": [["Invalid table format received from AI. Please try again."]]
-                        })
-                    logger.info("Valid JSON table format confirmed")
-                except json.JSONDecodeError as e:
-                    logger.error(f"Failed to parse table response as JSON: {e}")
-                    logger.info(f"Response content: {final_response}")
-                    # Return the original response if it's not valid JSON
-                    return final_response
-            
-            return final_response
+                parsed_response = json.loads(final_response)
+                
+                # Validate required fields
+                if not isinstance(parsed_response, dict) or 'type' not in parsed_response or 'data' not in parsed_response:
+                    logger.error("Invalid JSON structure from LLM")
+                    logger.info(f"Response: {final_response}")
+                    # Return fallback response
+                    return json.dumps({
+                        "type": "text",
+                        "data": "I received an invalid response format. Please try again.",
+                        "meta": { "title": "Error" }
+                    })
+                
+                # Validate type
+                valid_types = ["text", "table", "tree", "metric"]
+                if parsed_response['type'] not in valid_types:
+                    logger.error(f"Invalid type: {parsed_response['type']}")
+                    # Fallback to text
+                    parsed_response['type'] = 'text'
+                    parsed_response['data'] = str(parsed_response.get('data', ''))
+                
+                # Return valid JSON
+                return json.dumps(parsed_response)
+                
+            except json.JSONDecodeError as e:
+                logger.error(f"Failed to parse JSON response: {e}")
+                logger.info(f"Raw response: {final_response}")
+                # Return as text if JSON parsing fails
+                return json.dumps({
+                    "type": "text",
+                    "data": final_response,
+                    "meta": { "title": "Response" }
+                })
             
         except Exception as e:
             logger.error(f"Failed to generate response: {e}", exc_info=True)

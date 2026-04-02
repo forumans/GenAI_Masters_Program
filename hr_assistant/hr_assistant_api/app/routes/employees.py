@@ -15,6 +15,7 @@ from app.schemas.employee import (
     EmployeeCreate,
     EmployeeUpdate,
     EmployeeResponse,
+    EmployeeEditResponse,
     PaginatedEmployees,
     LeaveRequestCreate,
     LeaveRequestUpdate,
@@ -49,7 +50,7 @@ def create_department(payload: DepartmentCreate, db: Session = Depends(get_db)):
 # Employees
 # ---------------------------------------------------------------------------
 
-@router.get("/employees", response_model=PaginatedEmployees)
+@router.get("/employees")
 def list_employees(
     page: int = Query(1, ge=1),
     per_page: int = Query(20, ge=1, le=100),
@@ -70,8 +71,33 @@ def list_employees(
             .limit(per_page)
     ).unique().all()
 
+    # Manually format the response to avoid timezone issues
+    formatted_employees = []
+    for emp in employees:
+        emp_dict = {
+            "id": emp.id,
+            "employee_number": emp.employee_number,
+            "first_name": emp.first_name,
+            "last_name": emp.last_name,
+            "email": emp.email,
+            "phone": emp.phone,
+            "department_id": emp.department_id,
+            "position": emp.position,
+            "hire_date": emp.hire_date.strftime('%m/%d/%Y'),  # Format as MM/DD/YYYY
+            "salary": float(emp.salary),
+            "status": emp.status.value,
+            "created_at": emp.created_at.isoformat(),
+            "updated_at": emp.updated_at.isoformat(),
+            "department": {
+                "id": emp.department.id,
+                "name": emp.department.name,
+                "description": emp.department.description
+            } if emp.department else None
+        }
+        formatted_employees.append(emp_dict)
+
     return {
-        "items": employees,
+        "items": formatted_employees,
         "total": total,
         "page": page,
         "per_page": per_page,
@@ -98,6 +124,17 @@ def get_employee(employee_id: int, db: Session = Depends(get_db)):
     if emp is None:
         raise HTTPException(status_code=404, detail=f"Employee {employee_id} not found.")
     return emp
+
+
+@router.get("/employees/{employee_id}/edit", response_model=EmployeeEditResponse)
+def get_employee_for_edit(employee_id: int, db: Session = Depends(get_db)):
+    """Get employee with ISO date format for edit forms."""
+    emp = db.scalars(
+        select(Employee).options(joinedload(Employee.department)).where(Employee.id == employee_id)
+    ).first()
+    if emp is None:
+        raise HTTPException(status_code=404, detail=f"Employee {employee_id} not found.")
+    return EmployeeEditResponse.from_orm(emp)
 
 
 @router.put("/employees/{employee_id}", response_model=EmployeeResponse)

@@ -131,12 +131,42 @@ class EmployeeResponse(BaseModel):
     phone: Optional[str] = None
     department_id: int
     position: str
-    hire_date: date
+    hire_date: date  # Use date type but handle timezone in endpoints
     salary: Decimal
     status: EmployeeStatus
     created_at: datetime
     updated_at: datetime
     department: Optional[DepartmentSummary] = None
+
+
+class EmployeeEditResponse(BaseModel):
+    """Response schema for edit form that includes date in ISO format for date input."""
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    employee_number: str
+    first_name: str
+    last_name: str
+    email: str
+    phone: Optional[str] = None
+    department_id: int
+    position: str
+    hire_date: str  # ISO format for date input (YYYY-MM-DD)
+    hire_date_display: str  # Display format (MM/DD/YYYY)
+    salary: Decimal
+    status: EmployeeStatus
+    created_at: datetime
+    updated_at: datetime
+    department: Optional[DepartmentSummary] = None
+
+    @classmethod
+    def from_orm(cls, obj):
+        """Create from ORM model with both date formats."""
+        data = obj.__dict__.copy()
+        if hasattr(obj, 'hire_date') and obj.hire_date:
+            data['hire_date'] = obj.hire_date.strftime('%Y-%m-%d')  # ISO format for date input
+            data['hire_date_display'] = obj.hire_date.strftime('%m/%d/%Y')  # Display format
+        return cls(**data)
 
 
 class PaginatedEmployees(BaseModel):

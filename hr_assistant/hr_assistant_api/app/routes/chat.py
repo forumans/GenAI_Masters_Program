@@ -80,6 +80,7 @@ def _find_employee_by_name(name: str, db: Session) -> Optional[Employee]:
         ).first()
         
         if employee:
+            logger.info(f"Found employee by first name: {employee.full_name}, status: {employee.status}")
             return employee
         
         # Try last name
@@ -88,6 +89,7 @@ def _find_employee_by_name(name: str, db: Session) -> Optional[Employee]:
         ).first()
         
         if employee:
+            logger.info(f"Found employee by last name: {employee.full_name}, status: {employee.status}")
             return employee
         
         # Try fuzzy match in both fields
@@ -95,6 +97,9 @@ def _find_employee_by_name(name: str, db: Session) -> Optional[Employee]:
             (Employee.first_name.ilike(f"%{single_name}%")) |
             (Employee.last_name.ilike(f"%{single_name}%"))
         ).first()
+        
+        if employee:
+            logger.info(f"Found employee by fuzzy match: {employee.full_name}, status: {employee.status}")
         
         return employee
     
@@ -113,31 +118,131 @@ def _build_employee_context(employee_id: Optional[int], db: Session, question: s
                 f"Position: {emp.position} | "
                 f"Department: {emp.department.name if emp.department else 'Unknown'} | "
                 f"Status: {emp.status.value} | "
-                f"Hire Date: {emp.hire_date}"
+                f"Hire Date: {emp.hire_date.strftime('%m/%d/%Y')}"
             )
     
     # If no ID but we have a question, try to extract names
     if question:
+        # Check if this is a request for multiple employees
+        if any(keyword in question.lower() for keyword in ["employees", "all employees", "list of", "bring the details", "show all"]):
+            names = _extract_employee_names(question)
+            logger.info(f"Extracted names for multiple employee search: {names}")
+            if names:
+                # For each name, find all matching employees
+                all_employees = []
+                for name in names:
+                    employees = _find_all_employees_by_name(name, db)
+                    all_employees.extend(employees)
+                
+                if all_employees:
+                    logger.info(f"Found {len(all_employees)} employees total")
+                    # Build context with all employees
+                    context_parts = []
+                    for emp in all_employees:
+                        # Calculate years of service
+                        from datetime import date
+                        today = date.today()
+                        years_of_service = today.year - emp.hire_date.year - ((today.month, today.day) < (emp.hire_date.month, emp.hire_date.day))
+                        
+                        context_parts.append(
+                            f"Employee: {emp.full_name} | "
+                            f"Number: {emp.employee_number} | "
+                            f"Position: {emp.position} | "
+                            f"Department: {emp.department.name if emp.department else 'Unknown'} | "
+                            f"Status: {emp.status.value} | "
+                            f"Hire Date: {emp.hire_date.strftime('%m/%d/%Y')} | "
+                            f"Years of Service: {years_of_service}"
+                        )
+                    
+                    return "\n".join(context_parts)
+        
+        # Single employee request
         names = _extract_employee_names(question)
+        logger.info(f"Extracted names for single employee search: {names}")
         for name in names:
-            emp = _find_employee_by_name(name, db)
-            if emp:
+            employee = _find_employee_by_name(name, db)
+            if employee:
+                logger.info(f"Building context for employee: {employee.full_name}")
+                logger.info(f"Raw hire_date from database: {employee.hire_date} (type: {type(employee.hire_date)})")
+                logger.info(f"hire_date year: {employee.hire_date.year}, month: {employee.hire_date.month}, day: {employee.hire_date.day}")
                 # Calculate years of service
                 from datetime import date
                 today = date.today()
-                years_of_service = today.year - emp.hire_date.year - ((today.month, today.day) < (emp.hire_date.month, emp.hire_date.day))
+                years_of_service = today.year - employee.hire_date.year - ((today.month, today.day) < (employee.hire_date.month, employee.hire_date.day))
+                
+                # Format date consistently - database has 2021-07-01, so display as 07/01/2021
+                formatted_date = employee.hire_date.strftime('%m/%d/%Y')
+                logger.info(f"Formatted date: {formatted_date}")
                 
                 return (
-                    f"Employee: {emp.full_name} | "
-                    f"Number: {emp.employee_number} | "
-                    f"Position: {emp.position} | "
-                    f"Department: {emp.department.name if emp.department else 'Unknown'} | "
-                    f"Status: {emp.status.value} | "
-                    f"Hire Date: {emp.hire_date} | "
+                    f"Employee: {employee.full_name} | "
+                    f"Number: {employee.employee_number} | "
+                    f"Position: {employee.position} | "
+                    f"Department: {employee.department.name if employee.department else 'Unknown'} | "
+                    f"Status: {employee.status.value} | "
+                    f"Hire Date: {formatted_date} | "
                     f"Years of Service: {years_of_service}"
                 )
+        logger.warning(f"No employee found for extracted names: {names}")
     
     return None
+
+
+def _find_all_employees_by_name(name: str, db: Session) -> list[Employee]:
+    """Find all employees by first name, last name, or single name."""
+    employees = []
+    parts = name.split()
+    
+    if len(parts) >= 2:
+        # Two or more parts - treat as first name + last name(s)
+        first_name = parts[0]
+        last_name = " ".join(parts[1:])
+        
+        # Try exact match
+        emps = db.query(Employee).filter(
+            Employee.first_name.ilike(first_name),
+            Employee.last_name.ilike(last_name)
+        ).all()
+        employees.extend(emps)
+        
+        # Try fuzzy match
+        emps = db.query(Employee).filter(
+            Employee.first_name.ilike(f"%{first_name}%"),
+            Employee.last_name.ilike(f"%{last_name}%")
+        ).all()
+        employees.extend(emps)
+    else:
+        # Single name - could be first name or last name
+        single_name = parts[0]
+        
+        # Try first name
+        emps = db.query(Employee).filter(
+            Employee.first_name.ilike(single_name)
+        ).all()
+        employees.extend(emps)
+        
+        # Try last name
+        emps = db.query(Employee).filter(
+            Employee.last_name.ilike(single_name)
+        ).all()
+        employees.extend(emps)
+        
+        # Try fuzzy match in both fields
+        emps = db.query(Employee).filter(
+            (Employee.first_name.ilike(f"%{single_name}%")) |
+            (Employee.last_name.ilike(f"%{single_name}%"))
+        ).all()
+        employees.extend(emps)
+    
+    # Remove duplicates
+    unique_employees = []
+    seen_ids = set()
+    for emp in employees:
+        if emp.id not in seen_ids:
+            unique_employees.append(emp)
+            seen_ids.add(emp.id)
+    
+    return unique_employees
 
 
 @router.post("/chat", response_model=ChatResponse)

@@ -20,6 +20,12 @@ RAG_TEMPLATE = """You are an HR assistant.
 Your job is to answer user questions using the provided context and conversation history.
 
 --------------------------------
+OUTPUT MODE PRIORITY (highest to lowest):
+1. TREE / ORG STRUCTURE MODE
+2. TABLE MODE
+3. TEXT MODE
+--------------------------------
+
 DATA SOURCE PRIORITY:
 1. Use the retrieved context as the primary source of truth
 2. If not found, use conversation history ONLY if it was previously derived from context
@@ -31,28 +37,68 @@ STRICT RULES:
 - Do NOT infer missing values
 - If data is missing, use "" (empty string)
 - Keep answers concise and factual
-- If using general knowledge, say "Based on general HR practices..." or similar
-- IMPORTANT: If you provide organizational information, preserve the structure for potential reformatting
+- If using general knowledge, say "Based on general HR practices..."
+- IMPORTANT: If you provide organizational information, preserve structure
 
 --------------------------------
-EMPLOYEE-SPECIFIC QUESTIONS:
-When an employee context is provided below (includes hire date, years of service):
-- USE THE EMPLOYEE'S HIRE DATE AND YEARS OF SERVICE FROM THE CONTEXT
-- For vacation days: Check the policy for accrual based on years of service
-- For other benefits: Consider tenure requirements from policies
-- Always base calculations on the provided employee details
-- EXAMPLE: If employee has 3 years of service, use the 3-year vacation accrual rate
+TREE / ORG STRUCTURE OUTPUT MODE (STRICT OVERRIDE):
+
+Trigger this mode when the question is about:
+- organizational structure
+- org structure
+- org chart
+- hierarchy
+- reporting structure
+- who reports to whom
+- team structure
+- chain of command
+- management structure
+
+If triggered:
+- This mode OVERRIDES all other modes
+- You MUST return ONLY a tree structure
+- DO NOT return paragraphs, explanations, or JSON
+
+CRITICAL FORMATTING RULES:
+- Each node MUST be on a NEW LINE
+- Output MUST contain real line breaks (not spaces)
+- DO NOT compress output into a single line
+- Use plain text only
+
+FORMAT:
+Parent
+├── Child
+│   ├── Sub-child
+│   └── Sub-child
+└── Child
+
+- Maintain proper indentation using spaces
+- Use characters: ├── , └── , │
+
+DATA HANDLING:
+- The context may be unordered or not perfectly structured
+- You MUST reconstruct the hierarchy logically from the available data
+- Do NOT fall back to paragraph format
+- If only partial hierarchy is available, construct the best possible structure
+
+VALIDATION BEFORE RETURN:
+- Ensure output has multiple lines
+- If output is a single line, rewrite into proper multi-line tree format
+
+FAILURE CONDITION:
+If no hierarchy information is available, return:
+"I don't have enough information to determine the organizational structure."
 
 --------------------------------
-TABLE OUTPUT MODE (STRICT):
+TABLE OUTPUT MODE:
 
-Trigger JSON output ONLY when:
+Trigger this mode when:
 - User explicitly asks for table, list, or structured format
-- OR user asks to reformat a previous answer into table/list
+- OR user asks to reformat previous answer into table/list
 
-When triggered:
+If triggered:
 - Return ONLY valid JSON
-- Do not include ANY text before or after JSON
+- Do NOT include ANY text before or after JSON
 
 FORMAT:
 {{
@@ -67,40 +113,33 @@ JSON RULES:
 - No extra fields
 - No markdown
 - Use "" for missing values
----------------------------------
-- If no data is available, return:
-  {{
-    "columns": [],
-    "rows": []
-  }}
+
+If no data is available, return:
+{{
+  "columns": [],
+  "rows": []
+}}
 
 --------------------------------
-TREE/DIAGRAM OUTPUT MODE:
-
-When user asks for tree, hierarchy, or org chart format:
-- Return structured text representation using indentation
-- Use → or └── to show hierarchy
-- Do NOT use markdown tables unless specifically requested
-- If no structured data available, say "I don't have sufficient structured data to create a tree diagram"
-
---------------------------------
-NON-TABLE OUTPUT MODE:
+NON-TABLE / TEXT OUTPUT MODE:
 
 - Return a clear natural language answer
 - Do NOT include JSON
-- If no answer found in context, you may provide general guidance but clearly state it's not from the specific documents
+- If no answer found in context, you may provide general guidance but clearly state it
 
 --------------------------------
 
 IMPORTANT:
 - NEVER mix JSON and text in the same response
 - NEVER generate partial JSON
-- Follow output mode strictly
+- Follow output mode priority strictly
 
 --------------------------------
 
 Employee Context:
 {employee_context}
+
+NOTE: If hire date is provided above (e.g., "Hire Date: 06/30/2021"), use this exact format in your response. Do not convert to other date formats.
 
 Conversation History:
 {history}
@@ -171,10 +210,14 @@ class AIService:
                 history_text = "\n".join(history_parts)
             
             # Check if the user is asking for a table format
-            table_keywords = ["table", "put in a table", "show as a table", "display as table", "format as table", "tree", "hierarchy", "org chart", "tree format", "tree diagram"]
+            table_keywords = ["table", "put in a table", "show as a table", "display as table", "format as table"]
+            tree_keywords = ["organizational structure", "org structure", "org chart", "hierarchy", "reporting structure", "who reports to whom", "team structure", "chain of command", "management structure", "tree", "tree format", "tree diagram"]
+            
             is_table_request = any(keyword in question.lower() for keyword in table_keywords)
+            is_tree_request = any(keyword in question.lower() for keyword in tree_keywords)
             
             logger.info(f"Is table request: {is_table_request}")
+            logger.info(f"Is tree request: {is_tree_request}")
             
             # Retrieve context
             try:
@@ -200,6 +243,9 @@ class AIService:
             # Log the employee context specifically
             if employee_context:
                 logger.info(f"Employee context found: {employee_context}")
+                # Check if this is an employment status question
+                if any(keyword in question.lower() for keyword in ["still working", "currently employed", "still employed", "working with", "employment status"]):
+                    logger.info("This appears to be an employment status question - check the status in the context above")
             else:
                 logger.warning("No employee context provided - employee may not be found in database")
             
@@ -223,8 +269,8 @@ class AIService:
                 logger.error(f"Error in RAG chain: {e}", exc_info=True)
                 raise
             
-            # If it's a table request, validate the JSON response
-            if is_table_request:
+            # If it's a table request (not tree), validate the JSON response
+            if is_table_request and not is_tree_request:
                 logger.info(f"Checking if table response is valid JSON...")
                 logger.info(f"Response starts with: {final_response[:50]}...")
                 

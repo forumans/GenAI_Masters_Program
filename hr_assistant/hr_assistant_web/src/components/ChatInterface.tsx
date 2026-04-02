@@ -492,10 +492,33 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ employeeId }) => {
             >
               {msg.content ? (
                 msg.role === "assistant" ? (
-                  <div 
-                    dangerouslySetInnerHTML={{ __html: parseMarkdown(msg.content) }}
-                    className="prose prose-sm max-w-none"
-                  />
+                  (() => {
+                    // Check if this is a tree structure (contains └── or ├──)
+                    const isTreeStructure = msg.content.includes('└──') || msg.content.includes('├──');
+                    
+                    if (isTreeStructure) {
+                      // For tree structures, use pre-wrap to preserve formatting
+                      return (
+                        <div
+                          style={{
+                            whiteSpace: "pre-wrap",
+                            fontFamily: "monospace",
+                            lineHeight: "1.5",
+                          }}
+                        >
+                          {msg.content}
+                        </div>
+                      );
+                    } else {
+                      // For other content, use the existing markdown parser
+                      return (
+                        <div 
+                          dangerouslySetInnerHTML={{ __html: parseMarkdown(msg.content) }}
+                          className="prose prose-sm max-w-none"
+                        />
+                      );
+                    }
+                  })()
                 ) : (
                   msg.content
                 )

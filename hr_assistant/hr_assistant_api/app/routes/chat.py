@@ -255,6 +255,7 @@ def chat(payload: ChatRequest, db: Session = Depends(get_db)):
             question=payload.message,
             employee_context=employee_context,
             conversation_history=payload.conversation_history,
+            db=db
         )
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"AI service error: {str(exc)}")
@@ -279,6 +280,7 @@ def chat_stream(payload: ChatRequest, db: Session = Depends(get_db)):
                 question=payload.message,
                 employee_context=employee_context,
                 conversation_history=payload.conversation_history,
+                db=db
             ):
                 yield f"data: {json.dumps({'token': token})}\n\n"
         except Exception as exc:

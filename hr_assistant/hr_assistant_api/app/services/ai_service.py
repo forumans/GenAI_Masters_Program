@@ -2,6 +2,7 @@
 
 import logging
 from typing import Generator, List, Optional
+from sqlalchemy.orm import Session
 
 from openai import OpenAI
 from langchain_core.prompts import ChatPromptTemplate
@@ -137,11 +138,88 @@ class AIService:
             search_kwargs={"k": 5}
         )
 
+    def _handle_leave_query(self, question: str, db: Session) -> str:
+        """Handle queries about employees on leave by querying the database directly."""
+        from datetime import date
+        from app.models.employee import Employee, LeaveRequest, LeaveStatus, EmployeeStatus
+        import json
+        
+        logger.info("Handling leave query - querying database directly")
+        
+        # Get employees who are currently on leave (status = on_leave)
+        employees_on_leave = db.query(Employee).filter(Employee.status == EmployeeStatus.on_leave).all()
+        
+        # Also check for approved leave requests that include today
+        today = date.today()
+        approved_leave_requests = db.query(LeaveRequest).filter(
+            LeaveRequest.status == LeaveStatus.approved,
+            LeaveRequest.start_date <= today,
+            LeaveRequest.end_date >= today
+        ).all()
+        
+        # Combine both sources
+        leave_data = []
+        
+        # Add employees with on_leave status
+        for emp in employees_on_leave:
+            leave_data.append({
+                "employee": emp.full_name,
+                "employee_number": emp.employee_number,
+                "department": emp.department.name if emp.department else "Unknown",
+                "position": emp.position,
+                "leave_type": "On Leave Status",
+                "start_date": "N/A",
+                "end_date": "N/A"
+            })
+        
+        # Add employees with approved leave requests
+        for leave in approved_leave_requests:
+            # Avoid duplicates if already in on_leave status
+            if not any(item["employee_number"] == leave.employee.employee_number for item in leave_data):
+                leave_data.append({
+                    "employee": leave.employee.full_name,
+                    "employee_number": leave.employee.employee_number,
+                    "department": leave.employee.department.name if leave.employee.department else "Unknown",
+                    "position": leave.employee.position,
+                    "leave_type": leave.leave_type.value,
+                    "start_date": leave.start_date.strftime("%m/%d/%Y"),
+                    "end_date": leave.end_date.strftime("%m/%d/%Y")
+                })
+        
+        # Format response as JSON
+        if leave_data:
+            response = {
+                "type": "table",
+                "data": {
+                    "columns": ["Employee", "Employee Number", "Department", "Position", "Leave Type", "Start Date", "End Date"],
+                    "rows": [[item["employee"], item["employee_number"], item["department"], 
+                            item["position"], item["leave_type"], item["start_date"], item["end_date"]] 
+                           for item in leave_data]
+                },
+                "meta": {
+                    "title": "Employees Currently on Leave",
+                    "description": f"Showing {len(leave_data)} employee(s) currently on leave as of {today.strftime('%m/%d/%Y')}"
+                }
+            }
+        else:
+            response = {
+                "type": "text",
+                "data": "No employees are currently on leave.",
+                "meta": {
+                    "title": "Employees on Leave",
+                    "description": f"No employees on leave as of {today.strftime('%m/%d/%Y')}"
+                }
+            }
+        
+        logger.info(f"Leave query response: {len(leave_data)} employees on leave")
+        return json.dumps(response)
+
     def generate_response(
         self,
         question: str,
         employee_context: Optional[str] = None,
         conversation_history: Optional[List[dict]] = None,
+        db: Optional[Session] = None,
     ) -> str:
         try:
             logger.info(f"Received question: {question}")
@@ -160,11 +238,17 @@ class AIService:
             # Check if the user is asking for a table format (kept for logging only)
             table_keywords = ["table", "put in a table", "show as a table", "display as table", "format as table"]
             tree_keywords = ["organizational structure", "org structure", "org chart", "hierarchy", "reporting structure", "who reports to whom", "team structure", "chain of command", "management structure", "tree", "tree format", "tree diagram"]
+            leave_keywords = ["on leave", "currently on leave", "employees on leave", "who is on leave", "on leave today", "on leave now", "absent", "on vacation"]
             
             is_table_request = any(keyword in question.lower() for keyword in table_keywords)
             is_tree_request = any(keyword in question.lower() for keyword in tree_keywords)
+            is_leave_request = any(keyword in question.lower() for keyword in leave_keywords)
             
-            logger.info(f"Request type - Table: {is_table_request}, Tree: {is_tree_request}")
+            logger.info(f"Request type - Table: {is_table_request}, Tree: {is_tree_request}, Leave: {is_leave_request}")
+            
+            # Special handling for leave queries - query database directly
+            if is_leave_request:
+                return self._handle_leave_query(question, db)
             
             # Retrieve context
             try:
@@ -295,6 +379,7 @@ class AIService:
         question: str,
         employee_context: Optional[str] = None,
         conversation_history: Optional[List[dict]] = None,
+        db: Optional[Session] = None,
     ) -> Generator[str, None, None]:
         """Stream a response to a user's question.
 
@@ -302,6 +387,7 @@ class AIService:
             question: The user's question.
             employee_context: Optional employee information.
             conversation_history: Previous conversation turns.
+            db: Optional database session for direct queries.
 
         Yields:
             Response tokens as they are generated.
@@ -309,7 +395,7 @@ class AIService:
         try:
             # For now, use the regular generate_response and stream the result
             # Could be enhanced with true streaming later
-            response = self.generate_response(question, employee_context, conversation_history)
+            response = self.generate_response(question, employee_context, conversation_history, db)
             for word in response.split():
                 yield word + " "
                 

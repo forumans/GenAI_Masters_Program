@@ -20,6 +20,7 @@ langchain-community>=0.0.20
 langchain-openai>=0.1.0
 langchain-text-splitters>=0.0.0
 langchain-core>=0.1.0
+langchain-chroma>=0.1.0
 
 # Additional PDF support
 pypdf>=3.0.0

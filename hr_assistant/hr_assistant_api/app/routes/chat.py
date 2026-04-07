@@ -183,7 +183,7 @@ def _build_employee_context(employee_id: Optional[int], db: Session, question: s
                     f"Hire Date: {formatted_date} | "
                     f"Years of Service: {years_of_service}"
                 )
-        logger.warning(f"No employee found for extracted names: {names}")
+        logger.debug(f"No employee found for extracted names: {names}")
     
     return None
 
@@ -248,7 +248,7 @@ def _find_all_employees_by_name(name: str, db: Session) -> list[Employee]:
 @router.post("/chat", response_model=ChatResponse)
 def chat(payload: ChatRequest, db: Session = Depends(get_db)):
     employee_context = _build_employee_context(payload.employee_id, db, payload.message)
-    logger.info(f"Employee context: {employee_context}")
+    logger.debug(f"Employee context: {employee_context or 'No employee context provided'}")
     try:
         ai_service = get_ai_service()
         response_text = ai_service.generate_response(
@@ -264,7 +264,7 @@ def chat(payload: ChatRequest, db: Session = Depends(get_db)):
 @router.post("/chat/stream")
 def chat_stream(payload: ChatRequest, db: Session = Depends(get_db)):
     employee_context = _build_employee_context(payload.employee_id, db, payload.message)
-    logger.info(f"Employee context: {employee_context}")
+    logger.debug(f"Employee context: {employee_context or 'No employee context provided'}")
     logger.info(f"Received chat request. History present: {bool(payload.conversation_history)}")
     if payload.conversation_history:
         logger.debug(f"History length: {len(payload.conversation_history)}")
